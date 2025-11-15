@@ -1,22 +1,73 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
+
+type championInfo = {
+  title: string,
+  image: {
+    full: string
+    sprite: string
+  },
+  tags: string[]
+}
+
 function App() {
-  const [data, setData] = useState([])
+  // const [puuid, setPuuid] = useState([])
+  // const [account, setAccount] = useState([])
+  const [versions, setVersions] = useState([])
+  const [champions, setChampions] = useState({})
 
   useEffect(() => {
-    const api_url = 'https://na1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key=RGAPI-90c16d7f-b0f5-40c7-acdd-14dbdebe282c'
+    // const api_url = 'https://na1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key=RGAPI-90c16d7f-b0f5-40c7-acdd-14dbdebe282c'
+    // const champion_versions = 'https://ddragon.leagueoflegends.com/api/versions.json'
+    // const champion_data = 'https://ddragon.leagueoflegends.com/cdn/14.22.1/data/en_US/champion.json'
+    
 
-    fetch(api_url)
-      .then((response) => response.json())
-      .then(data => console.log('Data', data))
+    // fetch(champion_versions)
+    //   .then((data) => data.json())
+    //   .then(response => setVersions(prev => prev.concat(response)))
+    // console.log('DONE', versions)
+
+    // fetch(champion_data)
+    //   .then(data => data.json())
+    //   .then(response => console.log('Champions', response.data, champions))
+      // .then(response => setChampions(response.data))
+      
+
+    const showChampionData = async () => {
+      const versionData = await fetch('https://ddragon.leagueoflegends.com/api/versions.json')
+      const versionResponse = await versionData.json();
+      const championData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versionResponse[0]}/data/en_US/champion.json`)
+      const championResponse = await championData.json()
+
+      setVersions(prev => prev.concat(versionResponse))
+      setChampions(championResponse.data)
+      console.log('OK', versionResponse, championResponse)
+    }
+    showChampionData()
   }, [])
 
   return (
     <main>
-      <h1>League of Legends</h1>
+      <h2>CHOOSE YOUR</h2>
+      <h1>Champion</h1>
+      <p>With more than 170 champions, you'll find the perfect match for your play style. Master one, or<br/>master them all.</p>
 
-      
+      {Object.entries(champions).map(([key, value]) => {
+        const v = value as championInfo
+        // const singleChampionsData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/en_US/champion/${key}.json`)
+        // const singleChampionsResponse = await singleChampionsData.json()
+
+        // console.log('Images', singleChampionsResponse)
+        console.log('V', versions)
+        return (
+          <div>
+            {/* <img src={singleChampionsResponse.data[key].image.full} /> */}
+            <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${key}_0.jpg`} />
+            <h3 key={key}>{key}: {v.title} </h3>
+          </div>
+      )
+      })}
     </main>
   )
 }
