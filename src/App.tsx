@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import ChampionInformation from './Components/ChampionInformation'
 import './App.css'
 
 
@@ -16,6 +17,7 @@ function App() {
   // const [account, setAccount] = useState([])
   const [versions, setVersions] = useState([])
   const [champions, setChampions] = useState({})
+  const [singleChampion, setSingleChampion] = useState({})
 
   useEffect(() => {
     // const api_url = 'https://na1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key=RGAPI-90c16d7f-b0f5-40c7-acdd-14dbdebe282c'
@@ -43,9 +45,21 @@ function App() {
       setVersions(prev => prev.concat(versionResponse))
       setChampions(championResponse.data)
       console.log('OK', versionResponse, championResponse)
+      console.log('AATROX', versionResponse, championResponse)
     }
     showChampionData()
   }, [])
+
+  const fetchChampionData = async (championName: string) => {
+    const singleChampionsData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/en_US/champion/${championName}.json`)
+    const singleChampionsResponse = await singleChampionsData.json()
+
+    console.log('Click', championName, singleChampionsResponse)
+
+    setSingleChampion(singleChampionsResponse.data[`${championName}`])
+    console.log('STATE', singleChampion, singleChampionsResponse.data[`${championName}`])
+  }
+  // `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${singleChampion.name}_${0}.jpg` USE THIS FOR MAIN PAGE IMAGES
 
   return (
     <main>
@@ -59,15 +73,20 @@ function App() {
         // const singleChampionsResponse = await singleChampionsData.json()
 
         // console.log('Images', singleChampionsResponse)
+
         console.log('V', versions)
+        console.log('Champ Data', v)
         return (
-          <div>
+          <a key={key} onClick={() => fetchChampionData(key)}>
             {/* <img src={singleChampionsResponse.data[key].image.full} /> */}
-            <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${key}_0.jpg`} />
-            <h3 key={key}>{key}: {v.title} </h3>
-          </div>
+            {/* <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${key}_0.jpg`} style={{objectFit: 'cover', width: '300px', height: '420px'}}/> */}
+            <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${key}_${0}.jpg`} style={{objectFit: 'cover'}} />
+            <h3>{key.toUpperCase()} </h3> 
+          </a>
       )
       })}
+      
+      <ChampionInformation singleChampion={singleChampion} versions={versions} />
     </main>
   )
 }
