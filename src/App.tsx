@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import ChampionInformation from './Components/ChampionInformation'
+import Items from './Components/Items'
 import './App.css'
+import Accounts from './Components/Accounts'
 
 
 type championInfo = {
@@ -87,6 +89,8 @@ function App() {
       })}
       
       <ChampionInformation singleChampion={singleChampion} versions={versions} />
+      {/* <Items /> */}
+      <Accounts />
     </main>
   )
 }
