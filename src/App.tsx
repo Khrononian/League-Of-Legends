@@ -90,7 +90,7 @@ function App() {
       
       <ChampionInformation singleChampion={singleChampion} versions={versions} />
       {/* <Items /> */}
-      <Accounts versions={versions} />
+      <Accounts versions={versions} singleChampion={singleChampion} />
     </main>
   )
 }
