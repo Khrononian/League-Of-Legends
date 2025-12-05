@@ -9,19 +9,60 @@ import master from '../rankicons/9231-master.png'
 import grandmaster from '../rankicons/9476-grandmaster.png'
 import challenger from '../rankicons/9476-challenger.png'
 
+
+
+interface MatchResponse {
+    info: {
+        endOfGameResult: string
+    },
+}
+
+type ItemKey = `item${0 | 1 | 2 | 3 | 4 | 5 | 6}`
+
+type SummonerProfile = {
+    puuid: string,
+    summonerLevel: number,
+    profileIconId: number,
+}
+type Account = {
+    gameName: string
+}
+
 type RankedData = {
     tier: string,
     rank: string,
     leaguePoints: number,
     wins: number,
-    losses: number
+    losses: number,
+    puuid: string,
+}
+
+type Runes = {
+    slots: [
+        {
+            runes: [
+                id: number,
+                icon: string
+            ]
+        },
+    ]
+    perks: {
+        styles: [
+            selections: [
+                {
+                    perk: number
+                }
+            ]
+        ]
+    }
 }
 
 type MatchHistory = {
     info: {
         endOfGameResult: string
     },
-    
+    gameStartTimestamp: number,
+    gameEndTimestamp: number,
     gameMode: string,
     championName: string,
     participants: [
@@ -29,39 +70,72 @@ type MatchHistory = {
             puuid: string, 
             teamId: number,
             win: boolean,
+            riotIdGameName: string,
+            riotIdTagline: string,
             summoner1Id: number,
             summoner2Id: number,
             championName: string,
+            champLevel: number,
+            kills: number,
+            deaths: number,
+            assists: number,
+            detectorWardsPlaced: number,
+            wardsPlaced: number,
+            wardsKilled:number,
             neutralMinionsKilled: number,
             totalMinionsKilled: number,
+            goldEarned: number,
+            timePlayed: number,
+            item: string | number[],
+            item0: number,
+            item1: number,
+            item2: number,
+            item3: number,
+            item4: number,
+            item5: number,
+            item6: number,
+            challenges: {
+                kda: number,
+                killParticipation: number
+            },
             perks: {
                 styles: [
                     {selections: [
                         {perk: number}
                     ],
                     style: number
-                }
+                },
+                {selections: [
+                        {perk: number}
+                    ],
+                    style: number
+                },
                 ]
             }
         }
     ]
     teams: [
         teamId: number,
-        win: boolean
+        win: boolean,
     ]
 }
 
 const Accounts = ({ versions, singleChampion }) => {
-    const [searchedName, setSearchedName] = useState({})
+    const [searchedName, setSearchedName] = useState('')
 
-    const [account, setAccount] = useState({})
-    const [summonerProfile, setSummonerProfile] = useState({})
+    const [account, setAccount] = useState<Account>({
+        gameName: ''
+    })
+    const [summonerProfile, setSummonerProfile] = useState<SummonerProfile>({
+        puuid: '',
+        summonerLevel: 0,
+        profileIconId: 0,
+    })
     const [rankedStats, setRankedStats] = useState({})
     const [matchHistory, setMatchHistory] = useState()
     const [fullMatchData, setFullMatchData] = useState({})
     const [summonerSpells, setSummonerSpells] = useState({})
-    const [runes, setRunes] = useState()
-    // const [spellIds, setSpellIds] = useState<[number | undefined, number | undefined]>([0, 0]) // USE THIS TO PUSH THE SUMMONER SPELL IDS HERE
+    const [runes, setRunes] = useState<Runes[]>([])
     const [spellIds, setSpellIds] = useState<number[]>([0, 0]) // USE THIS TO PUSH THE SUMMONER SPELL IDS HERE
     
     
@@ -70,24 +144,24 @@ const Accounts = ({ versions, singleChampion }) => {
         const getAccountId = async () => {
             // cbvMj0zXJpL1rWyQ2pyk5WA7G5HI8RFxmQNov46NRU2CxWi7AlDT0QexRDrPUQdxLjBDxj2TexGoKQ - SELBULL ACCOUNT
             
-            const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/selbull/NA1?api_key=RGAPI-b511460a-9088-4f6e-9ed4-9daa9f71c01f`)
+            const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/selbull/NA1?api_key=RGAPI-543c7bfc-4bd6-4ad2-83f1-ad323c2a04e3`)
             // const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${NAME}/NA1?api_key=${API_KEY}`)
             const accountResponse = await accountData.json()
 
-            const accountId = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${accountResponse.puuid}?api_key=RGAPI-b511460a-9088-4f6e-9ed4-9daa9f71c01f`)
+            const accountId = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${accountResponse.puuid}?api_key=RGAPI-543c7bfc-4bd6-4ad2-83f1-ad323c2a04e3`)
             const accountIdResponse = await accountId.json()
 
-            const summonerProfile = await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accountResponse.puuid}?api_key=RGAPI-b511460a-9088-4f6e-9ed4-9daa9f71c01f`)
+            const summonerProfile = await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accountResponse.puuid}?api_key=RGAPI-543c7bfc-4bd6-4ad2-83f1-ad323c2a04e3`)
             const summonerProfileResponse = await summonerProfile.json()
 
-            const rankedData = await fetch(`https://na1.api.riotgames.com/lol/league/v4/entries/by-puuid/${accountResponse.puuid}?api_key=RGAPI-b511460a-9088-4f6e-9ed4-9daa9f71c01f`)
+            const rankedData = await fetch(`https://na1.api.riotgames.com/lol/league/v4/entries/by-puuid/${accountResponse.puuid}?api_key=RGAPI-543c7bfc-4bd6-4ad2-83f1-ad323c2a04e3`)
             const rankedDataResponse = await rankedData.json()
 
-            const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-b511460a-9088-4f6e-9ed4-9daa9f71c01f`)
+            const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-543c7bfc-4bd6-4ad2-83f1-ad323c2a04e3`)
             const matchHistoryIdResponse = await matchHistoryIdData.json()
 
-            const fullMatchData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${matchHistoryIdResponse[3]}?api_key=RGAPI-b511460a-9088-4f6e-9ed4-9daa9f71c01f`)
-            // const fullMatchData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/NA1_5416992220?api_key=RGAPI-b511460a-9088-4f6e-9ed4-9daa9f71c01f`)
+            const fullMatchData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${matchHistoryIdResponse[3]}?api_key=RGAPI-543c7bfc-4bd6-4ad2-83f1-ad323c2a04e3`)
+            // const fullMatchData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/NA1_5416992220?api_key=RGAPI-543c7bfc-4bd6-4ad2-83f1-ad323c2a04e3`)
             const fullMatchResponse = await fullMatchData.json()
 
 
@@ -104,7 +178,7 @@ const Accounts = ({ versions, singleChampion }) => {
 
             console.log('ACCOUNT', accountResponse, accountIdResponse, summonerProfileResponse, rankedDataResponse, matchHistoryIdResponse, fullMatchResponse, runesResponse)
             
-            const getSpellIds = (matchResponse) => {
+            const getSpellIds = (matchResponse: MatchResponse) => {
                 const spell: number[] = []
                 console.log('POO', matchResponse)
 
@@ -235,11 +309,11 @@ const Accounts = ({ versions, singleChampion }) => {
                                                 <p>{id?.champLevel}</p>
                                                 <div>
                                                     {
-                                                        Object.entries(summonerSpells).filter(([index, spell]) => Number(spell.key) == spellIds[0] || Number(spell.key) == spellIds[1]).map(([index, spell]) => {
+                                                        Object.entries(summonerSpells).filter(([_, spell]) => Number(spell.key) == spellIds[0] || Number(spell.key) == spellIds[1]).map(([index, element]) => {
 
                                                             return (
                                                                 // <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/spell/${Number(spell.key) == spellIds[0] ? spell.id : Number(spell.key) == spellIds[1] ? spell.id : '' }.png`} alt='Summoner spell' />
-                                                                <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/spell/${spell.id}.png`} alt='Summoner spell' />
+                                                                <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/spell/${element.id}.png`} alt='Summoner spell' />
                                                             )
                                                         })
                                                     }
@@ -249,7 +323,7 @@ const Accounts = ({ versions, singleChampion }) => {
                                             <div>
                                                     <p>{id?.kills}/{id?.deaths}/{id?.assists}</p>
                                                     <p>{id?.challenges.kda.toFixed(2)} KDA</p>
-                                                    <p>{id?.challenges.killParticipation.toFixed(2) * 100}% KP</p>
+                                                    <p>{Number(id?.challenges.killParticipation.toFixed(2)) * 100}% KP</p>
                                             </div>
 
                                             <div>
@@ -259,7 +333,8 @@ const Accounts = ({ versions, singleChampion }) => {
                                                                 return tree.slots.map(slot => {
                                                                     return slot.runes.map(rune => {
                                                                         return id?.perks.styles[0].selections.filter(id => id.perk == rune.id).map((perkId, innerIndex) => {
-                                                                            // console.log('NEWS NEWS', tree, slot, rune, perkId, id?.perks)
+                                                                            // console.log('BLUES', tree, slot, rune, perkId, id?.perks)
+                                                                            console.log('BLUES', tree, tree.slots, slot, rune, perkId)
                                                                             return (
                                                                                 <img src={`https://ddragon.leagueoflegends.com/cdn/img/${rune.icon}`} />
                                                                             )
@@ -276,7 +351,7 @@ const Accounts = ({ versions, singleChampion }) => {
                                                                     return slot.runes.map(rune => {
                                                                         return id?.perks.styles[1].selections.filter(id => id.perk == rune.id).map((perkId, innerIndex) => {
                                                                             // console.log('NEWS NEWS', tree, slot, rune, perkId)
-                                                                            console.log('NEW NEW', fullMatchData.info)
+                                                                            console.log('NEW NEW', fullMatchData.info, summonerProfile)
                                                                             return (
                                                                                 <img src={`https://ddragon.leagueoflegends.com/cdn/img/${rune.icon}`} />
                                                                             )
@@ -290,11 +365,32 @@ const Accounts = ({ versions, singleChampion }) => {
 
                                             <div>
                                                     {
-                                                        Object.entries(fullMatchData).map(([index, values]) => {
-                                                            const data = values as MatchHistory;
-                                                            const id = data.participants.find((id) => id.puuid == summonerProfile.puuid)
-                                                            const items = Array.from({ length: 6 }, (_, i) => id[`item${i}`])
-                                                            console.log('NEW NEW', id, index,  )
+                                                        // Object.entries(fullMatchData).map(([index, values]) => {
+                                                        //     const data = values as MatchHistory;
+                                                        //     const id = data.participants.find((id) => id.puuid == summonerProfile.puuid)
+                                                        //     const items = Array.from({ length: 6 }, (_, i) => id[`item${i}`])
+                                                        //     console.log('NEW NEW', id, index, data )
+
+                                                        //     return (
+                                                        //         <div>
+                                                        //             {items.map(id => (
+                                                        //                 id ? (
+                                                        //                     <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/item/${id}.png`} />
+                                                        //                 ) : (
+                                                        //                     <div className='empty-block' />
+                                                        //                 )
+                                                        //             ))}
+                                                        //         </div>
+                                                        //     )
+                                                        // })
+                                                        
+                                                        data.participants.filter(participant => participant.puuid == summonerProfile.puuid).map(item => {
+                                                            const items = Array.from({ length: 6 }, (_, i) => {
+                                                                const key = `item${i}` as ItemKey
+
+                                                                // return item[`item${i}`]
+                                                                return item[key]
+                                                            })
 
                                                             return (
                                                                 <div>
@@ -308,7 +404,6 @@ const Accounts = ({ versions, singleChampion }) => {
                                                                 </div>
                                                             )
                                                         })
-
                                                     }
                                             </div>
 
@@ -334,10 +429,37 @@ const Accounts = ({ versions, singleChampion }) => {
 
                                             <div>
                                                     <div>
-                                                    
+                                                        {
+                                                            data.participants.filter(element => element.teamId == 100).map(item => {
+                                                                
+                                                                console.log('MEW MEW', item, summonerProfile)
+                                                                return (
+                                                                    <div>
+                                                                        {/* {item?.summonerId} */}
+
+                                                                        <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/champion/${item.championName}.png`} />
+                                                                        <p>{item.riotIdGameName}-{item.riotIdTagline}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                            
+                                                        }
                                                     </div>
                                                     <div>
-                                                    
+                                                        {
+                                                            data.participants.filter(element => element.teamId == 200).map(item => {
+                                                                
+                                                                console.log('MEW MEW', item, summonerProfile)
+                                                                return (
+                                                                    <div>
+                                                                        {/* {item?.summonerId} */}
+
+                                                                        <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/champion/${item.championName}.png`} />
+                                                                        <p>{item.riotIdGameName}-{item.riotIdTagline}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
                                                     </div>
                                             </div>
                                         </div>
