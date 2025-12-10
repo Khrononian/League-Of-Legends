@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import ChampionInformation from './Components/ChampionInformation'
 import Items from './Components/Items'
-import './App.css'
+import Home from './Components/Home'
 import Accounts from './Components/Accounts'
-
+import './App.css'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
 type championInfo = {
   title: string,
@@ -65,32 +66,38 @@ function App() {
 
   return (
     <main>
-      <h2>CHOOSE YOUR</h2>
-      <h1>Champion</h1>
-      <p>With more than 170 champions, you'll find the perfect match for your play style. Master one, or<br/>master them all.</p>
-
-      {Object.entries(champions).map(([key, value]) => {
-        const v = value as championInfo
-        // const singleChampionsData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/en_US/champion/${key}.json`)
-        // const singleChampionsResponse = await singleChampionsData.json()
-
-        // console.log('Images', singleChampionsResponse)
-
-        console.log('V', versions)
-        console.log('Champ Data', v)
-        return (
-          <a key={key} onClick={() => fetchChampionData(key)}>
-            {/* <img src={singleChampionsResponse.data[key].image.full} /> */}
-            {/* <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${key}_0.jpg`} style={{objectFit: 'cover', width: '300px', height: '420px'}}/> */}
-            <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${key}_${0}.jpg`} style={{objectFit: 'cover'}} />
-            <h3>{key.toUpperCase()} </h3> 
-          </a>
-      )
-      })}
       
-      <ChampionInformation singleChampion={singleChampion} versions={versions} />
-      {/* <Items /> */}
-      <Accounts versions={versions} singleChampion={singleChampion} />
+
+      <Router>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/champions/:key' element={<ChampionInformation singleChampion={singleChampion} versions={versions} />} />
+          
+          {/* {Object.entries(champions).map(([key, value]) => {
+            const v = value as championInfo
+            // const singleChampionsData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/en_US/champion/${key}.json`)
+            // const singleChampionsResponse = await singleChampionsData.json()
+
+            // console.log('Images', singleChampionsResponse)
+
+            console.log('V', versions)
+            console.log('Champ Data', v)
+            return (
+                <Link to={`/champions/${key}`} key={key} onClick={() => fetchChampionData(key)}>
+                  <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${key}_${0}.jpg`} style={{objectFit: 'cover'}} />
+                  <h3>{key.toUpperCase()} </h3> 
+                </Link>
+            )
+          })} */}
+          
+          {/* <ChampionInformation singleChampion={singleChampion} versions={versions} /> */}
+          {/* <Items /> */}
+          {/* <Accounts versions={versions} /> */}
+          <Route path='/items' element={<Items />} />
+          <Route path='/accounts:accountName' element={<Accounts versions={versions} />} />
+
+        </Routes>
+      </Router>  
     </main>
   )
 }
