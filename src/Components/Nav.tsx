@@ -10,10 +10,12 @@ const Nav = () => {
                     <img src='' />
                 </Link>
             </div>
-            <li>Items</li>
-            <li>Accounts</li>
-            <Link to={'/items'}></Link>
-            <Link to={'/accounts'}></Link>
+            <Link to={'/items'}>
+                <li>Items</li>
+            </Link>
+            <Link to={'/accounts/:selbullNA1'}>
+                <li>Accounts</li>
+            </Link>
         </ul>
     </nav>
   )
