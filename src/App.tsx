@@ -94,7 +94,7 @@ function App() {
           {/* <Items /> */}
           {/* <Accounts versions={versions} /> */}
           <Route path='/items' element={<Items />} />
-          <Route path='/accounts:accountName' element={<Accounts versions={versions} />} />
+          <Route path='/accounts/:accountName' element={<Accounts versions={versions} />} />
 
         </Routes>
       </Router>  
