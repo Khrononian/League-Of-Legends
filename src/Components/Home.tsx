@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import Nav from './Nav'
 
 // type championInfo = {
 //   title: string,
@@ -42,7 +43,7 @@ const Home = () => {
 
     return (
         <section>
-
+            <Nav />
             <h2>CHOOSE YOUR</h2>
             <h1>Champion</h1>
             <p>With more than 170 champions, you'll find the perfect match for your play style. Master one, or<br/>master them all.</p>

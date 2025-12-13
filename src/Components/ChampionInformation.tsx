@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import Nav from './Nav'
 
 type SingleChampion = {
     title: string,
@@ -70,6 +71,7 @@ const ChampionInformation = ({ versions }) => {
 
     return (
         <section>
+            <Nav />
             {loading == true ? <p>Loading...</p> : <div>
                 <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${singleChampion.name}_0.jpg`} alt='Champion Splash' />
                 <div style={{backgroundImage: `url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${singleChampion.name}_0.jpg)`}}>

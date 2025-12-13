@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Nav from './Nav'
 
 type ItemValues = {
     name: string,
@@ -32,6 +33,7 @@ const Items = () => {
 
     return (
         <section>
+            <Nav />
             <div>
                 <form id='form' role='search'>
                     <input type='search' id='query'
