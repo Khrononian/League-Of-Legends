@@ -10,15 +10,14 @@ import master from '../rankicons/9231-master.png'
 import grandmaster from '../rankicons/9476-grandmaster.png'
 import challenger from '../rankicons/9476-challenger.png'
 
-
-
-interface MatchResponse {
-    info: {
-        endOfGameResult: string
-    },
-}
-
 type ItemKey = `item${0 | 1 | 2 | 3 | 4 | 5 | 6}`
+
+type Spells = {
+    [index: number]: {
+        key: string,
+        id: string
+    }
+}
 
 type SummonerProfile = {
     puuid: string,
@@ -27,6 +26,7 @@ type SummonerProfile = {
 }
 type Account = {
     gameName: string
+    puuid: string
 }
 
 type RankedData = {
@@ -53,6 +53,15 @@ type Runes = {
     ]
 }
 
+type SpellInfo = {
+    [index: number]: MatchHistory
+}
+
+type SummonerSpells = {
+    key: string,
+    id: string,
+}
+
 type MatchHistory = {
     info: {
         endOfGameResult: string
@@ -60,6 +69,7 @@ type MatchHistory = {
         gameEndTimestamp: number,
         gameMode: string,
         championName: string,
+        gameId: number
         participants: [
             {
                 puuid: string, 
@@ -118,9 +128,9 @@ type MatchHistory = {
 
 const Accounts = ({ versions }) => {
     const [searchedName, setSearchedName] = useState('')
-
     const [account, setAccount] = useState<Account>({
-        gameName: ''
+        gameName: '',
+        puuid: ''
     })
     const [summonerProfile, setSummonerProfile] = useState<SummonerProfile>({
         puuid: '',
@@ -131,22 +141,28 @@ const Accounts = ({ versions }) => {
     const [matchHistory, setMatchHistory] = useState()
     // const [fullMatchData, setFullMatchData] = useState({})
     const [fullMatchData, setFullMatchData] = useState([[{}]])
+    // const [summonerSpells, setSummonerSpells] = useState<Spells>({})
     const [summonerSpells, setSummonerSpells] = useState({})
+    // const [summonerSpells, setSummonerSpells] = useState({})
+    const [gameIds, setGameIds] = useState([])
     const [runes, setRunes] = useState<Runes[]>([])
-    const [spellIds, setSpellIds] = useState<number[]>([0, 0]) // USE THIS TO PUSH THE SUMMONER SPELL IDS HERE
+    const [spellIds, setSpellIds] = useState<number[][]>([[0, 0]]) // USE THIS TO PUSH THE SUMMONER SPELL IDS HERE
     const [loading, setLoading] = useState(true)
     
-    const fetchAccountData = async (accountName) => {
-        const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${accountName}/NA1?api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
+    const fetchAccountData = async (accountName: string) => {
+        const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${accountName}/NA1?api_key=RGAPI-04b149cb-9a47-44b5-baee-dc0cb215930d`)
         const accountResponse = await accountData.json()
 
-        const accountId = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${accountResponse.puuid}?api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
+        const accountId = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${accountResponse.puuid}?api_key=RGAPI-04b149cb-9a47-44b5-baee-dc0cb215930d`)
         const accountIdResponse = await accountId.json()
 
-        const summonerProfile = await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accountResponse.puuid}?api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
+        const summonerProfile = await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accountResponse.puuid}?api_key=RGAPI-04b149cb-9a47-44b5-baee-dc0cb215930d`)
         const summonerProfileResponse = await summonerProfile.json()
 
-        const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
+        const rankedData = await fetch(`https://na1.api.riotgames.com/lol/league/v4/entries/by-puuid/${accountResponse.puuid}?api_key=RGAPI-04b149cb-9a47-44b5-baee-dc0cb215930d`)
+        const rankedDataResponse = await rankedData.json()
+
+        const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-04b149cb-9a47-44b5-baee-dc0cb215930d`)
         const matchHistoryIdResponse = await matchHistoryIdData.json()
 
         const fetchMatchHistory = async () => {
@@ -156,7 +172,7 @@ const Accounts = ({ versions }) => {
                 const sliced = matchHistoryIdResponse.slice(i, i + 5)
 
                 const sliceSize = await Promise.all(
-                    sliced.map((id: string) => fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${id}?api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
+                    sliced.map((id: string) => fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${id}?api_key=RGAPI-04b149cb-9a47-44b5-baee-dc0cb215930d`)
                 .then(response => response.json()))
                 )
 
@@ -176,100 +192,43 @@ const Accounts = ({ versions }) => {
 
         const runesData = await fetch(`https://ddragon.leagueoflegends.com/cdn/15.23.1/data/en_US/runesReforged.json`) 
         const runesResponse = await runesData.json()
+
+        setAccount(accountIdResponse)
+        setSummonerProfile(summonerProfileResponse)
+        setRankedStats(rankedDataResponse)
+
+        setMatchHistory(matchHistoryIdResponse)
+        setFullMatchData(await fetchMatchHistory())
+        setRunes(runesResponse)
+        
+
+        const getSpellIds = (matchResponse) => {
+            const spell: number[][] = []
+            console.log('POO', matchResponse, spell)
+
+            
+
+            matchResponse.map((res) => res.map(element => {
+                const data = element as MatchHistory
+                // DONT FORGET TO CHANGE THE PUUID BELOW THIS COMMENT
+                const id = data.info.participants.find((id) => id.puuid == 'cbvMj0zXJpL1rWyQ2pyk5WA7G5HI8RFxmQNov46NRU2CxWi7AlDT0QexRDrPUQdxLjBDxj2TexGoKQ')
+                const gameId = data.info.gameId
+
+                if (id) spell.push([id?.summoner1Id, id?.summoner2Id])
+
+                setGameIds(prev => prev.concat(gameId))
+
+                console.log('WORKED', spell, id )
+            }))
+            
+            setSpellIds(spell)
+        }
+
+        getSpellIds(await fetchMatchHistory())
+        setLoading(false)
     }
 
     useEffect(() => {
-        const getAccountId = async () => {
-            // cbvMj0zXJpL1rWyQ2pyk5WA7G5HI8RFxmQNov46NRU2CxWi7AlDT0QexRDrPUQdxLjBDxj2TexGoKQ - SELBULL ACCOUNT
-            
-            
-            const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/selbull/NA1?api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
-            // const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${NAME}/NA1?api_key=${API_KEY}`)
-            const accountResponse = await accountData.json()
-
-            const accountId = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${accountResponse.puuid}?api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
-            const accountIdResponse = await accountId.json()
-
-            const summonerProfile = await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accountResponse.puuid}?api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
-            const summonerProfileResponse = await summonerProfile.json()
-
-            const rankedData = await fetch(`https://na1.api.riotgames.com/lol/league/v4/entries/by-puuid/${accountResponse.puuid}?api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
-            const rankedDataResponse = await rankedData.json()
-
-            const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
-            const matchHistoryIdResponse = await matchHistoryIdData.json()
-
-            const fetchMatchHistory = async () => {
-                const matchHistoryResults = []
-
-                for (let i = 0; i < matchHistoryIdResponse.length; i += 5) {
-                    const sliced = matchHistoryIdResponse.slice(i, i + 5)
-
-                    const sliceSize = await Promise.all(
-                        sliced.map((id: string) => fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${id}?api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
-                    .then(response => response.json()))
-                    )
-                    sliceSize.map(item => delete item.metadata)
-
-                    matchHistoryResults.push(sliceSize)
-
-                    console.log('FULLS', matchHistoryResults)
-
-                    matchHistoryResults.map((item, index) => {
-                        console.log('FULLSTRAIN', item, index)
-
-                        item.map(element => console.log('FULLINNER', element))
-                    })
-                    // const fullMatchData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${matchHistoryIdResponse[i]}?api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
-                    // const fullMatchResponse = await fullMatchData.json()
-
-                    
-                    
-                    await new Promise(resolve => setTimeout(resolve, 800))
-                }
-                return matchHistoryResults
-            }
-
-            // const fullMatchData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${matchHistoryIdResponse[3]}?api_key=RGAPI-3f6f6c4a-6fec-416c-b5e8-c6469a00e4ed`)
-            // const fullMatchResponse = await fullMatchData.json()
-
-            const runesData = await fetch(`https://ddragon.leagueoflegends.com/cdn/15.23.1/data/en_US/runesReforged.json`) 
-            const runesResponse = await runesData.json()
-
-            // delete fullMatchResponse.metadata
-            setAccount(accountIdResponse)
-            setSummonerProfile(summonerProfileResponse)
-            setRankedStats(rankedDataResponse)
-
-            setMatchHistory(matchHistoryIdResponse)
-            // setFullMatchData(fullMatchResponse)
-            setFullMatchData(await fetchMatchHistory())
-            setRunes(runesResponse)
-
-            console.log('ACCOUNT', accountResponse, accountIdResponse, summonerProfileResponse, rankedDataResponse, matchHistoryIdResponse,  runesResponse)
-            console.log('WORDS', await fetchMatchHistory())
-            setLoading(false)
-            const getSpellIds = (matchResponse) => {
-                const spell: number[] = []
-                console.log('POO', matchResponse)
-
-                // Object.entries(matchResponse).map(([, values]) => {
-                matchResponse.map((res) => res.map(element => {
-                    const data = element as MatchHistory
-                    const id = data.participants.find((id) => id.puuid == 'cbvMj0zXJpL1rWyQ2pyk5WA7G5HI8RFxmQNov46NRU2CxWi7AlDT0QexRDrPUQdxLjBDxj2TexGoKQ')
-
-                    if (id) spell.push(id?.summoner1Id, id?.summoner2Id)
-                        console.log('WORKED', spell, id, values)
-                }))
-                
-                setSpellIds(spell)
-            }
-
-            // getSpellIds(fullMatchResponse)
-            // console.log('FULLSSSSSS', fullMatchData)
-            getSpellIds(await fetchMatchHistory())
-        }
-
         // REMOVE THIS FUNCTION AFTER MAKING SURE EVERYTHING WORKS SO THAT IT ONLY OPERATES WHEN SEARCHED
         const loadSummonerSpells = async () => {
             const versionData = await fetch('https://ddragon.leagueoflegends.com/api/versions.json')
@@ -283,12 +242,14 @@ const Accounts = ({ versions }) => {
             // for (const internal of info.map((inner) => inner[1])) {
             //     console.log('SPELLS2', internal.key)
             // }
-            setSummonerSpells(Object.entries(spellResponse.data).map(inner => inner[1]))
+            // setSummonerSpells(Object.entries(spellResponse.data).map(inner => inner[1]))
+            setSummonerSpells(Object.values(spellResponse.data))
             console.log('SS', fullMatchData)
             // setSummonerSpells(Object.entries(spellResponse.data))
         }
 
-        getAccountId()
+        // getAccountId()
+        fetchAccountData('selbull')
         loadSummonerSpells()
     }, [])
 
@@ -359,8 +320,8 @@ const Accounts = ({ versions }) => {
                             // Object.entries(fullMatchData).map(([index, values]) => {
                             fullMatchData.map(response => response.map(element => {
                                 const data = element as MatchHistory; 
-                                const start = data.gameStartTimestamp
-                                const end = data.gameEndTimestamp
+                                const start = data.info.gameStartTimestamp
+                                const end = data.info.gameEndTimestamp
                                 const duration = end - start
                                 const diff = Date.now() - start
                                 console.log('INTEGER', data, element )
@@ -370,13 +331,13 @@ const Accounts = ({ versions }) => {
                                 // setSpellIds([spell1, spell2])
 
                                 
-                                console.log('MATCH NEWS', data, id, id?.win, summonerSpells, id?.summoner1Id, spellIds, runes )
+                                console.log('MATCH NEWS', data, id, id?.win, summonerSpells, id?.summoner1Id, id?.summoner2Id, spellIds, runes )
                                 // console.log('MATCHHH', fullMatchData, data)
                                 return (
                                     <div>
                                         <div>
                                             <p>{isNaN(Math.floor(duration / 60000)) != true ? `${Math.floor(duration / 60000)} min` : null}</p>
-                                            <p>{data.gameMode}</p>
+                                            <p>{data.info.gameMode}</p>
                                             <p>{id?.win == true ? 'VICTORY' : id?.win == false && id?.timePlayed > 180 ? 'DEFEAT' : 'REMAKE'}</p>
                                             <p>{isNaN(Math.floor(diff / (1000 * 60 * 60 * 24))) != true ? `${Math.floor(diff / (1000 * 60 * 60 * 24))} days ago` : null } </p>
                                         </div>
@@ -386,11 +347,25 @@ const Accounts = ({ versions }) => {
                                                 <p>{id?.champLevel}</p>
                                                 <div>
                                                     {
-                                                        Object.entries(summonerSpells).filter(([_, spell]) => Number(spell.key) == spellIds[0] || Number(spell.key) == spellIds[1]).map(([index, element]) => {
+                                                        spellIds.map((group, index) => {
+                                                            console.log('PILLOW', group, data, id, 5430338614)
 
                                                             return (
-                                                                // <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/spell/${Number(spell.key) == spellIds[0] ? spell.id : Number(spell.key) == spellIds[1] ? spell.id : '' }.png`} alt='Summoner spell' />
-                                                                <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/spell/${element.id}.png`} alt='Summoner spell' />
+                                                                group.map(spellId => {
+                                                                    const spells: SummonerSpells = Object.values(summonerSpells).find((s) => Number(s.key) === spellId )
+                                                                    const gameId = data.info.gameId
+                                                                    const firstSpell = data.info.participants.find(id => id.puuid == account.puuid)?.summoner1Id
+                                                                    const secondSpell = data.info.participants.find(id => id.puuid == account.puuid)?.summoner2Id
+
+                                                                    
+                                                                    console.log('PILLOW2', spells, account, gameId == 5430338614, firstSpell == Number(spells.key), secondSpell == Number(spells.key))
+                                                                    console.log('PILLOWS3', gameId == 5430338614, firstSpell == group[0], secondSpell == group[1], spellId, group)
+
+                                                                    if (gameIds[index] == gameId && firstSpell == group[0] && secondSpell == group[1]) {
+                                                                        console.log('PILLOWS444444444', gameIds)
+                                                                        return <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/spell/${spells.id}.png`} alt='Summoner spell' />
+                                                                    }
+                                                                })
                                                             )
                                                         })
                                                     }
@@ -442,25 +417,6 @@ const Accounts = ({ versions }) => {
 
                                             <div>
                                                     {
-                                                        // Object.entries(fullMatchData).map(([index, values]) => {
-                                                        //     const data = values as MatchHistory;
-                                                        //     const id = data.participants.find((id) => id.puuid == summonerProfile.puuid)
-                                                        //     const items = Array.from({ length: 6 }, (_, i) => id[`item${i}`])
-                                                        //     console.log('NEW NEW', id, index, data )
-
-                                                        //     return (
-                                                        //         <div>
-                                                        //             {items.map(id => (
-                                                        //                 id ? (
-                                                        //                     <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/item/${id}.png`} />
-                                                        //                 ) : (
-                                                        //                     <div className='empty-block' />
-                                                        //                 )
-                                                        //             ))}
-                                                        //         </div>
-                                                        //     )
-                                                        // })
-                                                        
                                                         data.info.participants.filter(participant => participant.puuid == summonerProfile.puuid).map(item => {
                                                             const items = Array.from({ length: 6 }, (_, i) => {
                                                                 const key = `item${i}` as ItemKey
