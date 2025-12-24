@@ -12,18 +12,38 @@ type SingleChampion = {
     },
     passive: {
         name: string
+        description: string,
+        image: {
+            full: string
+        }
     },
     skins: [
         {num: number, name: string}
     ],
+    spells: [{
+        id: string,
+        name: string,
+        description: string
+        image: {
+            full: string
+        }
+    }]
+}
 
+type ChampionData = {
+    name: string,
+    id: string,
+    description: string,
+    image: {
+        full: string
+    }
 }
 
 const ChampionInformation = ({ versions }) => {
     const [defaultAbility, setDefaultAbility] = useState(true)
     const [loading, setLoading] = useState(true)
     const [ability, setAbility] = useState('')
-    const [abilityId, setAbilityId] = useState('')
+    const [abilityId, setAbilityId] = useState(0)
     const [singleChampion, setSingleChampion] = useState<SingleChampion>({
         title: '',
         name: '',
@@ -33,16 +53,28 @@ const ChampionInformation = ({ versions }) => {
             difficulty: 0
         },
         passive: {
-            name: ''
+            name: '',
+            description: '',
+            image: {
+            full: ''
+        }
         },
         skins: [
             {num: 0, name: ''}
         ],
+        spells: [{
+            id: '',
+            name: '',
+            description: '',
+            image: {
+                full: ''
+            }
+        }]
     })
-    const champName = useParams()
+    const champName = useParams<{ champName: string }>()
 
     useEffect(() => {
-        const getChampionData = async (championName: Readonly<Params<string>>) => {
+        const getChampionData = async (championName: Readonly<Partial<{ champName: string, key: string }>>) => {
             console.log('INNER', championName)
 
             const singleChampionsData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/en_US/champion/${champName.key}.json`)
@@ -61,12 +93,16 @@ const ChampionInformation = ({ versions }) => {
     const changeAbility = (event: React.MouseEvent) => {
         console.log('AATROX', event.currentTarget.id, event.currentTarget.key)
         // setAbility(event.target.id)
+        
+        if (event.currentTarget.id == 'passive') setAbility('passive')
+        else setAbility('')
+        
         setDefaultAbility(false)
-        setAbilityId(event.currentTarget.id)
+        setAbilityId(Number(event.currentTarget.id))
     }
     
     // const singleChampion = (location.state )
-    console.log('YEEE', singleChampion, champName, champName.key)
+    console.log('YEEE', singleChampion, champName, )
 
 
     return (
@@ -100,13 +136,13 @@ const ChampionInformation = ({ versions }) => {
                     <div>
                         <h4>ABILITIES</h4>
                         <div>
-                            <div id='passive'>
+                            <div id='passive' onClick={changeAbility}>
                                 <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/passive/${singleChampion.passive.image.full}`} alt='Passive' />
                                 <p>{singleChampion.passive.name.toUpperCase()}</p>
                             </div>
-                            {singleChampion.spells.map((elements: {name: string, id: string, image: {full: string}}, index: number) => (
+                            {singleChampion.spells.map((elements: ChampionData, index: number) => (
                                 // <div id={elements.id.slice(-1)} key={index} onClick={changeAbility}>
-                                <div id={index} key={index} onClick={changeAbility}>
+                                <div id={index.toString()} key={index} onClick={changeAbility}>
                                     <img  src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/spell/${elements.image.full}`} alt='Abilities' />
                                     <p>{elements.name.toUpperCase()}</p>
                                 </div>
@@ -115,9 +151,9 @@ const ChampionInformation = ({ versions }) => {
                     </div>
 
                     <div>
-                        <h3>{defaultAbility == true ? singleChampion.passive.name : singleChampion.spells[abilityId].name }</h3>
-                        <h4>{defaultAbility == true ? 'Passive' : ability}</h4>
-                        <p>{defaultAbility == true ? singleChampion.passive.description : singleChampion.spells[abilityId].description}</p>
+                        <h3>{defaultAbility == true ? singleChampion.passive.name : ability == 'passive' ? singleChampion.passive.name : singleChampion.spells[abilityId].name }</h3>
+                        <h4>{defaultAbility == true ? 'Passive' : ability == 'passive' ? 'Passive' : singleChampion.spells[abilityId].id.slice(-1)}</h4>
+                        <p>{defaultAbility == true ? singleChampion.passive.description : ability == 'passive' ? singleChampion.passive.description.replace(/<\/?[^>]+(>|$)/g, " ") : singleChampion.spells[abilityId].description}</p>
                     </div>
                 </div>
 
@@ -126,7 +162,7 @@ const ChampionInformation = ({ versions }) => {
                     <div>
                         <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${singleChampion.name}_0.jpg`} alt='Main skin' />
                         {singleChampion.skins.map((elements: {num: number, name: string}) => (
-                            <div id={elements.num}>
+                            <div id={elements.name}>
                                 <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${singleChampion.name}_${elements.num}.jpg`} alt={elements.name} />
                                 <p>{elements.name == 'default' ? singleChampion.name : elements.name}</p>
                             </div>
