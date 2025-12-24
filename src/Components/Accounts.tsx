@@ -12,13 +12,6 @@ import challenger from '../rankicons/9476-challenger.png'
 
 type ItemKey = `item${0 | 1 | 2 | 3 | 4 | 5 | 6}`
 
-type Spells = {
-    [index: number]: {
-        key: string,
-        id: string
-    }
-}
-
 type SummonerProfile = {
     puuid: string,
     summonerLevel: number,
@@ -51,10 +44,6 @@ type Runes = {
             ]
         },
     ]
-}
-
-type SpellInfo = {
-    [index: number]: MatchHistory
 }
 
 type SummonerSpells = {
@@ -144,35 +133,35 @@ const Accounts = ({ versions }) => {
     // const [summonerSpells, setSummonerSpells] = useState<Spells>({})
     const [summonerSpells, setSummonerSpells] = useState({})
     // const [summonerSpells, setSummonerSpells] = useState({})
-    const [gameIds, setGameIds] = useState([])
+    const [gameIds, setGameIds] = useState<number[]>([])
     const [runes, setRunes] = useState<Runes[]>([])
     const [spellIds, setSpellIds] = useState<number[][]>([[0, 0]]) // USE THIS TO PUSH THE SUMMONER SPELL IDS HERE
     const [loading, setLoading] = useState(true)
     
     const fetchAccountData = async (accountName: string) => {
-        const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${accountName}/NA1?api_key=RGAPI-04b149cb-9a47-44b5-baee-dc0cb215930d`)
+        const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${accountName}/NA1?api_key=RGAPI-eb7af4bb-91a2-4bec-b670-be7954f757e2`)
         const accountResponse = await accountData.json()
 
-        const accountId = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${accountResponse.puuid}?api_key=RGAPI-04b149cb-9a47-44b5-baee-dc0cb215930d`)
+        const accountId = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${accountResponse.puuid}?api_key=RGAPI-eb7af4bb-91a2-4bec-b670-be7954f757e2`)
         const accountIdResponse = await accountId.json()
 
-        const summonerProfile = await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accountResponse.puuid}?api_key=RGAPI-04b149cb-9a47-44b5-baee-dc0cb215930d`)
+        const summonerProfile = await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accountResponse.puuid}?api_key=RGAPI-eb7af4bb-91a2-4bec-b670-be7954f757e2`)
         const summonerProfileResponse = await summonerProfile.json()
 
-        const rankedData = await fetch(`https://na1.api.riotgames.com/lol/league/v4/entries/by-puuid/${accountResponse.puuid}?api_key=RGAPI-04b149cb-9a47-44b5-baee-dc0cb215930d`)
+        const rankedData = await fetch(`https://na1.api.riotgames.com/lol/league/v4/entries/by-puuid/${accountResponse.puuid}?api_key=RGAPI-eb7af4bb-91a2-4bec-b670-be7954f757e2`)
         const rankedDataResponse = await rankedData.json()
 
-        const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-04b149cb-9a47-44b5-baee-dc0cb215930d`)
+        const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-eb7af4bb-91a2-4bec-b670-be7954f757e2`)
         const matchHistoryIdResponse = await matchHistoryIdData.json()
 
-        const fetchMatchHistory = async () => {
+        const fetchMatchHistory = async (): Promise<MatchHistory[][]> => {
             const matchHistoryResults = []
 
             for (let i = 0; i < matchHistoryIdResponse.length; i += 5) {
                 const sliced = matchHistoryIdResponse.slice(i, i + 5)
 
                 const sliceSize = await Promise.all(
-                    sliced.map((id: string) => fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${id}?api_key=RGAPI-04b149cb-9a47-44b5-baee-dc0cb215930d`)
+                    sliced.map((id: string) => fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${id}?api_key=RGAPI-eb7af4bb-91a2-4bec-b670-be7954f757e2`)
                 .then(response => response.json()))
                 )
 
@@ -187,6 +176,7 @@ const Accounts = ({ versions }) => {
                 
                 await new Promise(resolve => setTimeout(resolve, 800))
             }
+            console.log('MATA', matchHistoryResults)
             return matchHistoryResults
         }
 
@@ -202,13 +192,13 @@ const Accounts = ({ versions }) => {
         setRunes(runesResponse)
         
 
-        const getSpellIds = (matchResponse) => {
+        const getSpellIds = (matchResponse: MatchHistory[][]) => {
             const spell: number[][] = []
             console.log('POO', matchResponse, spell)
 
             
 
-            matchResponse.map((res) => res.map(element => {
+            matchResponse.map((res) => res.map((element: MatchHistory) => {
                 const data = element as MatchHistory
                 // DONT FORGET TO CHANGE THE PUUID BELOW THIS COMMENT
                 const id = data.info.participants.find((id) => id.puuid == 'cbvMj0zXJpL1rWyQ2pyk5WA7G5HI8RFxmQNov46NRU2CxWi7AlDT0QexRDrPUQdxLjBDxj2TexGoKQ')
@@ -352,7 +342,7 @@ const Accounts = ({ versions }) => {
 
                                                             return (
                                                                 group.map(spellId => {
-                                                                    const spells: SummonerSpells = Object.values(summonerSpells).find((s) => Number(s.key) === spellId )
+                                                                    const spells = Object.values(summonerSpells).find((s) => Number(s.key) === spellId )
                                                                     const gameId = data.info.gameId
                                                                     const firstSpell = data.info.participants.find(id => id.puuid == account.puuid)?.summoner1Id
                                                                     const secondSpell = data.info.participants.find(id => id.puuid == account.puuid)?.summoner2Id
