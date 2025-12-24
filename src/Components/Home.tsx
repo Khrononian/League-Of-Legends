@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Nav from './Nav'
+import '../styles/Home.css'
 
 // type championInfo = {
 //   title: string,
@@ -42,30 +43,35 @@ const Home = () => {
     }
 
     return (
-        <section>
+        <section className='home'>
             <Nav />
-            <h2>CHOOSE YOUR</h2>
-            <h1>Champion</h1>
-            <p>With more than 170 champions, you'll find the perfect match for your play style. Master one, or<br/>master them all.</p>
+            <header>
+                <h2>CHOOSE YOUR</h2>
+                <h1>Champion</h1>
+                <p className='desc'>With more than 170 champions, you'll find the perfect match for your play style. Master one, or<br/>master them all.</p>
+            </header>
+            <div className='champions'>
+                {Object.entries(champions).map(([key]) => {
+                    // const v = value as championInfo
 
-            {Object.entries(champions).map(([key]) => {
-                // const v = value as championInfo
+                    // const singleChampionsData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/en_US/champion/${key}.json`)
+                    // const singleChampionsResponse = await singleChampionsData.json()
 
-                // const singleChampionsData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/en_US/champion/${key}.json`)
-                // const singleChampionsResponse = await singleChampionsData.json()
+                    // console.log('Images', singleChampionsResponse)
 
-                // console.log('Images', singleChampionsResponse)
-
-                console.log('V', versions)
-                // console.log('STATE1', singleChampion)
-                return (
-                    <Link to={`/champions/${key}`} onClick={() => fetchChampionData(key)} state={{ singleChampion, key, versions }} key={key}>
-                        <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${key}_${0}.jpg`} style={{objectFit: 'cover'}} />
-                        <h3>{key.toUpperCase()} </h3> 
-                    </Link>
-                
-            )
-            })}
+                    console.log('V', versions)
+                    // console.log('STATE1', singleChampion)
+                    return (
+                        <Link to={`/champions/${key}`} onClick={() => fetchChampionData(key)} state={{ singleChampion, key, versions }} className='champion-card' key={key}>
+                            <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${key}_${0}.jpg`} style={{objectFit: 'cover'}} />
+                            <div className='champion-name'>
+                                <h3>{key.toUpperCase()} </h3> 
+                            </div>
+                        </Link>
+                    
+                    )
+                })}
+            </div>    
         </section>
     )
 }
