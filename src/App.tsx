@@ -6,15 +6,6 @@ import Accounts from './Components/Accounts'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-type championInfo = {
-  title: string,
-  image: {
-    full: string
-    sprite: string
-  },
-  tags: string[]
-}
-
 function App() {
   const [versions, setVersions] = useState<string[]>([])
   const [champions, setChampions] = useState({})
