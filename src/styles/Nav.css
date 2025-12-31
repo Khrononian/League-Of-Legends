@@ -2,7 +2,7 @@ nav {
     width: 100%;
     background: #111111;
     padding: .5em 0;
-    margin-bottom: 5rem;
+    /* margin-bottom: 5rem; */
 }
 nav ul {
     display: flex;
@@ -14,9 +14,9 @@ nav ul {
 }
 nav ul li {
     color: white;
-    
+    align-self: center;
 }
 nav ul li svg {
     cursor: pointer;
-    align-items: center;
+    align-self: center;
 }
