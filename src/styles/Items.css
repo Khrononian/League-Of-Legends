@@ -2,26 +2,29 @@
     position: relative;
     width: 95%;
 }
-.items-search {
+.items-search, .account-search {
     display: flex;
     justify-content: center;
-    margin-bottom: 5rem;
+    margin: 5rem 0;
 }
-.items-search form {
+.items-search form, .account-search form {
     display: flex;
 }
-.items-search form input {
+.items-search form input,
+.account-search form input {
     border-color: transparent;
     width: 400px;
     padding: 1em;
     border-bottom-left-radius: 8px;
     border-top-left-radius: 8px;
 }
-.items-search form input::placeholder {
+.items-search form input::placeholder,
+.account-search form input::placeholder {
     color: white;
     font-style: italic;
 }
-.items-search form button {
+.items-search form button,
+.account-search form button {
     border-color: transparent;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
