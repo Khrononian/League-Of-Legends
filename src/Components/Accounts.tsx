@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import '../styles/Accounts.css'
 import Nav from './Nav'
 import iron from '../rankicons/7574-iron.png'
 import bronze from '../rankicons/1184-bronze.png'
@@ -44,11 +45,6 @@ type Runes = {
             ]
         },
     ]
-}
-
-type SummonerSpells = {
-    key: string,
-    id: string,
 }
 
 type MatchHistory = {
@@ -137,21 +133,22 @@ const Accounts = ({ versions }) => {
     const [runes, setRunes] = useState<Runes[]>([])
     const [spellIds, setSpellIds] = useState<number[][]>([[0, 0]]) // USE THIS TO PUSH THE SUMMONER SPELL IDS HERE
     const [loading, setLoading] = useState(true)
+    const [spellLoading, setSpellLoading] = useState(true)
     
     const fetchAccountData = async (accountName: string) => {
-        const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${accountName}/NA1?api_key=RGAPI-bcc7f04a-4985-4a7e-b5c7-c3f06179c08e`)
+        const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${accountName}/NA1?api_key=RGAPI-ce106aa7-e482-4da2-9c16-5d3302488c67`)
         const accountResponse = await accountData.json()
 
-        const accountId = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${accountResponse.puuid}?api_key=RGAPI-bcc7f04a-4985-4a7e-b5c7-c3f06179c08e`)
+        const accountId = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${accountResponse.puuid}?api_key=RGAPI-ce106aa7-e482-4da2-9c16-5d3302488c67`)
         const accountIdResponse = await accountId.json()
 
-        const summonerProfile = await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accountResponse.puuid}?api_key=RGAPI-bcc7f04a-4985-4a7e-b5c7-c3f06179c08e`)
+        const summonerProfile = await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accountResponse.puuid}?api_key=RGAPI-ce106aa7-e482-4da2-9c16-5d3302488c67`)
         const summonerProfileResponse = await summonerProfile.json()
 
-        const rankedData = await fetch(`https://na1.api.riotgames.com/lol/league/v4/entries/by-puuid/${accountResponse.puuid}?api_key=RGAPI-bcc7f04a-4985-4a7e-b5c7-c3f06179c08e`)
+        const rankedData = await fetch(`https://na1.api.riotgames.com/lol/league/v4/entries/by-puuid/${accountResponse.puuid}?api_key=RGAPI-ce106aa7-e482-4da2-9c16-5d3302488c67`)
         const rankedDataResponse = await rankedData.json()
 
-        const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-bcc7f04a-4985-4a7e-b5c7-c3f06179c08e`)
+        const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-ce106aa7-e482-4da2-9c16-5d3302488c67`)
         const matchHistoryIdResponse = await matchHistoryIdData.json()
 
         const fetchMatchHistory = async (): Promise<MatchHistory[][]> => {
@@ -161,7 +158,7 @@ const Accounts = ({ versions }) => {
                 const sliced = matchHistoryIdResponse.slice(i, i + 5)
 
                 const sliceSize = await Promise.all(
-                    sliced.map((id: string) => fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${id}?api_key=RGAPI-bcc7f04a-4985-4a7e-b5c7-c3f06179c08e`)
+                    sliced.map((id: string) => fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${id}?api_key=RGAPI-ce106aa7-e482-4da2-9c16-5d3302488c67`)
                 .then(response => response.json()))
                 )
 
@@ -241,70 +238,76 @@ const Accounts = ({ versions }) => {
         // getAccountId()
         fetchAccountData('selbull')
         loadSummonerSpells()
+        setSpellLoading(false)
     }, [])
 
     return (
         <section>
             <Nav />
-            {loading == true ? <p>Loading...</p> : <div>
-                <form id='form' role='search'>
-                    <input type='search' id='query'
-                        placeholder='Search Summoner Profile'
-                    />
-                    <button>Search</button>
-                </form>
-                <div>
-                    <div>
-                        <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/profileicon/${summonerProfile.profileIconId}.png`} alt='Summoner Profile' />
-                        <span>{summonerProfile.summonerLevel}</span>
-                        <div>
-                            <p>{account.gameName}#NA1</p>
+            {loading == true  ? <p>Loading...</p> : <div className='account'>
+                <div className='account-search'>
+                    <form id='form' role='search'>
+                        <input type='search' id='query'
+                            placeholder='Summoner #NA1'
+                        />
+                        <button>Search</button>
+                    </form>
+                </div> 
+
+                <div className='account-main'>
+                    <div className='account-stats'>
+                        <div className='account-profile'>
+                            <img className='account-ranks-pfp' src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/profileicon/${summonerProfile.profileIconId}.png`} alt='Summoner Profile' />
+                            <span>{summonerProfile.summonerLevel}</span>
+                            <div>
+                                <p>{account.gameName}#NA1</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div>
-                        {
-                            Object.entries(rankedStats).map(([index, values]) => {
-                                const data = values as RankedData
-                                const wins = data.wins;
-                                const losses = data.losses
-                                const winRate = (wins / (wins + losses)) * 100
-                                const rankedIcons = [
-                                    {tier: 'iron', icon: iron}, {tier: 'bronze', icon: bronze}, {tier: 'silver', icon: silver},
-                                    {tier: 'gold', icon: gold}, {tier: 'platinum', icon: platinum}, {tier: 'diamond', icon: diamond},
-                                    {tier: 'master', icon: master}, {tier: 'grandmaster', icon: grandmaster}, {tier: 'challenger', icon: challenger}
-                                ]
-                                console.log('NEWS', matchHistory, data)
-                                // console.log('IMG', data.tier.toLowerCase()[0].toUpperCase(), index, values, data.tier.toLowerCase())
-                                // console.log('ICONS', rankedIcons.find(icon => icon.tier == data.tier.toLowerCase())?.icon)
-                                return (
-                                    <div key={index}>
-                                        <div>
-                                            <div>
-                                                <img src={`${rankedIcons.find(icon => icon.tier == data.tier.toLowerCase())?.icon}` } alt={`${data.tier} Rank icon`} />
-                                                <p>{data.queueType.includes('SOLO') ? 'Solo/Duo' : 'Flex 5v5'}</p>
-                                            </div>
-
-                                            <div>
-                                                <p>{data.tier} {data.rank}</p>
+                        <div className='account-ranks'>
+                            {
+                                Object.entries(rankedStats).map(([index, values]) => {
+                                    const data = values as RankedData
+                                    const wins = data.wins;
+                                    const losses = data.losses
+                                    const winRate = (wins / (wins + losses)) * 100
+                                    const rankedIcons = [
+                                        {tier: 'iron', icon: iron}, {tier: 'bronze', icon: bronze}, {tier: 'silver', icon: silver},
+                                        {tier: 'gold', icon: gold}, {tier: 'platinum', icon: platinum}, {tier: 'diamond', icon: diamond},
+                                        {tier: 'master', icon: master}, {tier: 'grandmaster', icon: grandmaster}, {tier: 'challenger', icon: challenger}
+                                    ]
+                                    console.log('NEWS', matchHistory, data)
+                                    // console.log('IMG', data.tier.toLowerCase()[0].toUpperCase(), index, values, data.tier.toLowerCase())
+                                    // console.log('ICONS', rankedIcons.find(icon => icon.tier == data.tier.toLowerCase())?.icon)
+                                    return (
+                                        <div key={index} >
+                                            <div className='account-ranks-stats'>
                                                 <div>
-                                                    <p>{data.leaguePoints} LP</p>
-                                                    <p>{winRate.toFixed(2)} % Win Rate</p>
+                                                    <img className='account-ranks-imgs' src={`${rankedIcons.find(icon => icon.tier == data.tier.toLowerCase())?.icon}` } alt={`${data.tier} Rank icon`} />
+                                                    <p>{data.queueType.includes('SOLO') ? 'Solo/Duo' : 'Flex 5v5'}</p>
                                                 </div>
-                                                <div>
-                                                    <p>{data.wins} Wins</p>
-                                                    *
-                                                    <p>{data.losses} Losses</p>
+
+                                                <div >
+                                                    <p>{data.tier} {data.rank}</p>
+                                                    <div className='account-ranks-stats'>
+                                                        <p>{data.leaguePoints} LP</p>
+                                                        <p>{winRate.toFixed(2)} % Win Rate</p>
+                                                    </div>
+                                                    <div className='account-ranks-stats'>
+                                                        <p>{data.wins} Wins</p>
+                                                        *
+                                                        <p>{data.losses} Losses</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )
-                            })
-                        }
+                                    )
+                                })
+                            }
+                        </div>
                     </div>
 
-                    <div>
+                    <div className='account-matches'>
                         {/* THIS THING IS SHOWING ONLY ONE. FIND A WAY TO MAKE IT SO THAT IT SHOWS ALL MATCHES */}
                         {
                             // Object.entries(fullMatchData).map(([index, values]) => {
@@ -324,18 +327,18 @@ const Accounts = ({ versions }) => {
                                 console.log('MATCH NEWS', data, id, id?.win, summonerSpells, id?.summoner1Id, id?.summoner2Id, spellIds, runes )
                                 // console.log('MATCHHH', fullMatchData, data)
                                 return (
-                                    <div>
-                                        <div>
+                                    <div className='account-match'>
+                                        <div className='account-match-stats'>
                                             <p>{isNaN(Math.floor(duration / 60000)) != true ? `${Math.floor(duration / 60000)} min` : null}</p>
                                             <p>{data.info.gameMode}</p>
-                                            <p>{id?.win == true ? 'VICTORY' : id?.win == false && id?.timePlayed > 180 ? 'DEFEAT' : 'REMAKE'}</p>
+                                            <p>{id?.win == true && id?.timePlayed > 180 ? 'VICTORY' : id?.win == false && id?.timePlayed > 180 ? 'DEFEAT' : 'REMAKE'}</p>
                                             <p>{isNaN(Math.floor(diff / (1000 * 60 * 60 * 24))) != true ? `${Math.floor(diff / (1000 * 60 * 60 * 24))} days ago` : null } </p>
                                         </div>
-                                        <div>
-                                            <div>
-                                                <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/champion/${id?.championName}.png`} />
+                                        <div className='account-match'>
+                                            <div className='account-match-champion'>
+                                                <img className='account-champion-pfp' src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/champion/${id?.championName}.png`} />
                                                 <p>{id?.champLevel}</p>
-                                                <div>
+                                                <div className='account-match-spells'>
                                                     {
                                                         spellIds.map((group, index) => {
                                                             console.log('PILLOW', group, data, id, 5430338614)
@@ -353,7 +356,7 @@ const Accounts = ({ versions }) => {
 
                                                                     if (gameIds[index] == gameId && firstSpell == group[0] && secondSpell == group[1]) {
                                                                         console.log('PILLOWS444444444', gameIds)
-                                                                        return <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/spell/${spells.id}.png`} alt='Summoner spell' />
+                                                                        return <img className='account-spell-pfps' src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/spell/${spells.id}.png`} alt='Summoner spell' />
                                                                     }
                                                                 })
                                                             )
@@ -362,14 +365,16 @@ const Accounts = ({ versions }) => {
                                                 </div>
                                             </div>
 
-                                            <div>
-                                                    <p>{id?.kills}/{id?.deaths}/{id?.assists}</p>
+                                            <div className='account-match-ratios'>
+                                                    <p>{id?.kills}/<span>{id?.deaths}</span>/{id?.assists}</p>
                                                     <p>{id?.challenges.kda.toFixed(2)} KDA</p>
-                                                    <p>{Math.round(Number(id?.challenges.killParticipation.toFixed(2)) * 100)}% KP</p>
+                                                    {/* <p>{Math.round(Number(id?.challenges.killParticipation.toFixed(2)) * 100)}% KP</p> */}
+                                                    
+                                                    <p>{(id?.win == true || id?.win == false) && id?.timePlayed > 180 ? Math.round(Number(id?.challenges.killParticipation.toFixed(2)) * 100) : 0}% KP</p>
                                             </div>
 
-                                            <div>
-                                                    <div>
+                                            <div className='account-match-runes'>
+                                                    <div className='account-match-rune'>
                                                         {
                                                             runes?.map((tree) => {
                                                                 return tree.slots.map(slot => {
@@ -386,7 +391,7 @@ const Accounts = ({ versions }) => {
                                                             })
                                                         }
                                                     </div>
-                                                    <div>  
+                                                    <div className='account-match-rune2'>  
                                                         {
                                                             runes?.map((tree) => {
                                                                 return tree.slots.map(slot => {
@@ -405,7 +410,7 @@ const Accounts = ({ versions }) => {
                                                     </div>
                                             </div>
 
-                                            <div>
+                                            <div className='account-match-items'>
                                                     {
                                                         data.info.participants.filter(participant => participant.puuid == summonerProfile.puuid).map(item => {
                                                             const items = Array.from({ length: 6 }, (_, i) => {
@@ -416,12 +421,12 @@ const Accounts = ({ versions }) => {
                                                             })
 
                                                             return (
-                                                                <div>
+                                                                <div className='account-match-item'>
                                                                     {items.map(id => (
-                                                                        id ? (
+                                                                        id && id !== 0 ? (
                                                                             <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/item/${id}.png`} />
                                                                         ) : (
-                                                                            <div className='empty-block' />
+                                                                            <div className='account-match-empty'></div>
                                                                         )
                                                                     ))}
                                                                 </div>
@@ -430,34 +435,35 @@ const Accounts = ({ versions }) => {
                                                     }
                                             </div>
 
-                                            <div>
-                                                    <p>{id?.goldEarned}</p>
-                                                    <p>{id?.neutralMinionsKilled} / {id?.neutralMinionsKilled + id?.totalMinionsKilled} </p>
+                                            <div className='account-match-info'>
+                                                    <p>{id?.goldEarned.toLocaleString("en-US")} <img src='https://cdn5.xdx.gg/icons/gold.webp' /></p>
+                                                    <p>{id?.neutralMinionsKilled} / {id?.neutralMinionsKilled + id?.totalMinionsKilled} <img src='https://cdn5.xdx.gg/icons/minion.webp' /> </p>
                                                     <p>({ ((id?.neutralMinionsKilled + id?.totalMinionsKilled) / (id?.timePlayed / 60)).toFixed(1) }/min)</p>
                                             </div>
-                                            <div>
-                                                    <div>
+
+                                            <div className='account-match-wards'>
+                                                    <div className='account-match-ward'>
                                                         <img src='https://ddragon.leagueoflegends.com/cdn/14.4.1/img/item/2055.png' />
                                                         <span>{id?.detectorWardsPlaced}</span>
                                                     </div>
-                                                    <div>
+                                                    <div className='account-match-ward'>
                                                         <img src='https://ddragon.leagueoflegends.com/cdn/14.4.1/img/item/3340.png' />
                                                         <span>{id?.wardsPlaced}</span>
                                                     </div>
-                                                    <div>
+                                                    <div className='account-match-ward'>
                                                         <img src='https://ddragon.leagueoflegends.com/cdn/14.4.1/img/item/3364.png' />
                                                         <span>{id?.wardsKilled}</span>
                                                     </div>
                                             </div>
 
-                                            <div>
+                                            <div className='account-match-players'>
                                                     <div>
                                                         {
                                                             data.info.participants.filter(element => element.teamId == 100).map(item => {
                                                                 
                                                                 console.log('MEW MEW', item, summonerProfile)
                                                                 return (
-                                                                    <div>
+                                                                    <div className='account-match-sp'>
                                                                         {/* {item?.summonerId} */}
 
                                                                         <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/champion/${item.championName}.png`} />
@@ -474,7 +480,7 @@ const Accounts = ({ versions }) => {
                                                                 
                                                                 console.log('MEW MEW', item, summonerProfile)
                                                                 return (
-                                                                    <div>
+                                                                    <div className='account-match-sp'>
                                                                         {/* {item?.summonerId} */}
 
                                                                         <img src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/champion/${item.championName}.png`} />
