@@ -1,0 +1,201 @@
+.account {
+    color: black;
+}
+
+.account-main {
+    width: 90vw;
+    background: green;
+    margin: 0 auto;
+}
+.account-stats {
+    /* background: red; */
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.account-ranks {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    background: red;
+    width: 550px;
+}
+.account-profile {
+    position: relative;
+}
+.account-profile span {
+    position: absolute;
+    bottom: 35%;
+    right: 0%;
+    /* transform: translate(0%, 0%); */
+    color: white;
+    font-size: 1.2rem;
+}
+.account-profile div {
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    transform: translate(100%, 0%);
+    color: white;
+    font-size: 1.5rem;
+}
+.account-profile div p {
+    margin: 0;
+}
+.account-ranks-pfp {
+    width: 105px;
+    height: 105px;
+}
+.account-ranks-imgs {
+    width: 85px;
+    height: 85px;
+}
+.account-ranks-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.account-matches {
+    display: flex;
+    flex-direction: column;
+}
+.account-match {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: yellow;
+    padding: .5em;
+}
+.account-match-stats {
+    padding: 1em;
+    /* width: 100px; */
+}
+
+.account-match-champion {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    position: relative;
+}
+.account-match-champion p {
+    position: absolute;
+    right: 0%;
+    /* bottom: 0%; */
+    margin: 0;
+    color: white;
+    font-size: 1.3rem;
+}
+.account-match-spells {
+    display: flex;
+    column-gap: 5px;
+}
+.account-champion-pfp {
+    width: 85px;
+    height: 85px;
+}
+.account-spell-pfps {
+    display: flex;
+    flex-direction: row;
+    width: 40px;
+    height: 40px;
+}
+
+.account-match-ratios {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.account-match-ratios p {
+    margin: 0;
+}
+
+.account-match-runes {
+    display: flex;
+    height: fit-content
+}
+.account-match-rune {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.account-match-rune2 {
+    display: flex;
+    align-self: center;
+    flex-direction: column;
+}
+.account-match-runes img {
+    width: 35px;
+    height: 35px;
+}
+.account-match-rune img:first-child {
+    width: 55px;
+    height: 55px;
+}
+
+.account-match-items {
+    display: flex;
+    align-items: center;
+    height: fit-content;
+}
+.account-match-item {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-self: center;
+    gap: 3px;
+}
+.account-match-item img {
+    width: 35px;
+    height: 35px;
+}
+.account-match-empty {
+    background: orange;
+    width: 35px;
+    height: 35px;
+}
+
+.account-match-info {
+    display: flex;
+    flex-direction: column;
+}
+.account-match-info p:first-child,
+.account-match-info p:nth-child(2) {
+    display: flex;
+}
+
+.account-match-wards {
+    display: flex;
+    flex-direction: column;
+}
+.account-match-ward {
+    display: flex;
+    column-gap: 10px;
+    row-gap: 11px;
+}
+.account-match-ward img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+}
+
+.account-match-players, 
+.account-match-sp {
+    display: flex;
+}
+.account-match-sp {
+    margin-bottom: .2em;
+}
+.account-match-sp p {
+    display: inline-block;
+    width: fit-content;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 70px;
+    height: fit-content;
+    margin: 0;
+}
+.account-match-sp img {
+    width: 35px;
+    height: 35px;
+}
