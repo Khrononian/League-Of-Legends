@@ -25,20 +25,44 @@
     padding-bottom: 1.5em;
     border-bottom: 2px solid #C8AA6E;
 }
+.champion-stats-icons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.champion-stats-icons, .champion-stats-inner svg {
+    margin-bottom: .5rem;
+}
 .champion-stats-inner {
     border: 2px solid #C8AA6E;
-    padding: 1em 1.5em;
+    padding: 1.5em 2.25em;
     margin-top: 1.5rem;
     text-align: center;
 }
 .champion-stats-inner h5 {
     margin-top: 0;
-    margin-bottom: .5em;
+    margin-bottom: 1em;
 }
 .champion-stats-inner p {
     margin: 0;
-    font-size: .8rem;
+    font-size: .7rem;
     color: #C8AA6E
+}
+.champion-mastery {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 400px;
+    font-size: .7rem;
+}
+.champion-mastery p {
+    color: grey;
+}
+.champion-mastery a {
+    color: white;
+}
+.champion-mastery a:hover {
+    text-decoration: underline;
 }
 
 .champion-ability {
