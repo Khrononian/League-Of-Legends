@@ -1,10 +1,15 @@
-.account {
-    color: black;
+.account-section {
+    background: black;
+}
+
+.account-search form input  {
+    /* width: 100%; */
+    /* margin: inherit auto; */
 }
 
 .account-main {
     width: 90vw;
-    background: green;
+    /* background: green; */
     margin: 0 auto;
 }
 .account-stats {
@@ -17,17 +22,19 @@
     display: flex;
     justify-content: space-between;
     flex-direction: row-reverse;
-    background: red;
+    /* background: red; */
     width: 550px;
 }
 .account-profile {
     position: relative;
+    height: fit-content;
 }
 .account-profile span {
     position: absolute;
-    bottom: 35%;
+    /* bottom: 35%; */
+    bottom: 0%;
     right: 0%;
-    /* transform: translate(0%, 0%); */
+    /* transform: translate(0%, -200%); */
     color: white;
     font-size: 1.2rem;
 }
@@ -59,17 +66,61 @@
 .account-matches {
     display: flex;
     flex-direction: column;
+    margin-top: 1.5em;
+}
+.account-match-main {
+    margin-top: .25em;
+    color: white;
 }
 .account-match {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: yellow;
     padding: .5em;
+    width: 98.5%;
+    /* column-gap: 10px; */
+    cursor: default;
 }
 .account-match-stats {
-    padding: 1em;
-    /* width: 100px; */
+    padding: .5em;
+    width: 100px;
+    height: 191px;
+}
+.account-match-stats-v {
+    color: lightgreen;
+}
+.account-match-stats-d {
+    color: red;
+}
+.account-match-stats-r {
+    color: rgb(168, 168, 168);
+}
+.account-match-leftside {
+    background: linear-gradient(90deg, #00000073, #000000a6)
+}
+.account-match-victory {
+    /* background: linear-gradient(90deg, #2a627180, #2a6271e6) */
+    background: linear-gradient(245deg, #1f4853be, #2a6271)
+}
+.account-match-defeat {
+    /* background: linear-gradient(90deg, #742d2d80, #742d2de6) */
+    background: linear-gradient(to right, #742d2d,  #852e2ee6);
+}
+.account-match-remake {
+    background: linear-gradient(90deg, #585858d9, grey)
+}
+.account-match-leftside-v {
+    background: #1a3c46;
+    font-weight: 500;
+}
+.account-match-leftside-d {
+    background: #4d1e1e;
+    font-weight: 500;
+
+}
+.account-match-leftside-r {
+    background: #3b3b3b;
+    font-weight: 500;
 }
 
 .account-match-champion {
@@ -106,8 +157,13 @@
     flex-direction: column;
     align-items: center;
 }
+.account-match-ratios span {
+    color: crimson
+}
 .account-match-ratios p {
     margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
 }
 
 .account-match-runes {
@@ -118,11 +174,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    row-gap: 5px;
 }
 .account-match-rune2 {
     display: flex;
     align-self: center;
-    flex-direction: column;
+    flex-direction: column-reverse;
 }
 .account-match-runes img {
     width: 35px;
@@ -131,6 +188,12 @@
 .account-match-rune img:first-child {
     width: 55px;
     height: 55px;
+}
+.account-match-rune2 img:last-child {
+    margin-top: 1.3em;
+}
+.account-match-rune2 img:first-child {
+    margin-top: .5em;
 }
 
 .account-match-items {
@@ -147,11 +210,14 @@
 .account-match-item img {
     width: 35px;
     height: 35px;
+    border-radius: 5px;
 }
 .account-match-empty {
-    background: orange;
+    background: transparent;
     width: 35px;
     height: 35px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
 }
 
 .account-match-info {
@@ -161,11 +227,15 @@
 .account-match-info p:first-child,
 .account-match-info p:nth-child(2) {
     display: flex;
+    justify-content: space-between;
 }
 
 .account-match-wards {
     display: flex;
     flex-direction: column;
+}
+.account-match-wards div:nth-child(2) {
+    margin: 1em 0;
 }
 .account-match-ward {
     display: flex;
@@ -198,4 +268,72 @@
 .account-match-sp img {
     width: 35px;
     height: 35px;
+}
+
+@media (min-width: 360px) and (max-width: 700px) {
+    .account-main {
+        width: 95vw;
+    }
+    .account-search form input {
+        width: 100%;
+    }
+
+    .account-match-main {
+        flex-direction: column;
+        width: 100%;
+    }
+    .account-matches {
+        margin-top: 1rem;
+        width: 96.5%;
+    }
+    .account-match-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        width: 98.6%;
+        height: fit-content;
+    }
+    .account-match-stats p {
+        margin: .5em 0;
+    }
+
+    .account-match-runes,
+    .account-match-info,
+    .account-match-wards,
+    .account-match-players {
+        display: none;
+    }
+}
+
+@media (min-width: 701px) and (max-width: 1050px) {
+    .account-main {
+        width: 95vw;
+    }
+    .account-match {
+        width: fit-content;
+        margin: 0 auto;
+    }
+    .account-match-split {
+        column-gap: 10px;
+    }
+    .account-match-stats {
+        width: 70px;
+    }
+    .account-match-players p {
+        width: 50px;
+    }
+    .account-match-info,
+    .account-match-wards {
+        display: none
+    }
+}
+
+@media (min-width: 1250px) {
+    .account-match {
+        width: 1150px;
+        margin: 0 auto;
+    }
+    .account-stats {
+        width: 1200px;
+        margin: 0 auto;
+    }
 }
