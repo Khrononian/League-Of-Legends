@@ -131,7 +131,7 @@ const ChampionInformation = ({ versions }) => {
                         
                         <div className='champion-stats'>
                             <div className='champion-stats-inner'>
-                                <div className='champion-stats-icons'>
+                                <div className={`champion-stats-icons ${!singleChampion.tags[1] ? 'champion-stats-icons-center' : ''}`} >
                                     <HugeiconsIcon
                                         icon={roleIcons.find((roles) => roles.role == singleChampion.tags[0])?.icon}
                                         size={34}
