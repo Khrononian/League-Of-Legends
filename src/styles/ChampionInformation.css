@@ -27,11 +27,14 @@
 }
 .champion-stats-icons {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     align-items: center;
 }
 .champion-stats-icons, .champion-stats-inner svg {
     margin-bottom: .5rem;
+}
+.champion-stats-icons-center {
+    justify-content: center;
 }
 .champion-stats-inner {
     border: 2px solid #C8AA6E;
