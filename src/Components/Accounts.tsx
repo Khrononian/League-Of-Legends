@@ -136,19 +136,19 @@ const Accounts = ({ versions }) => {
     const [spellLoading, setSpellLoading] = useState(true)
     
     const fetchAccountData = async (accountName: string) => {
-        const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${accountName}/NA1?api_key=RGAPI-ce106aa7-e482-4da2-9c16-5d3302488c67`)
+        const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${accountName}/NA1?api_key=RGAPI-0dfd3055-1457-436b-a872-62cff661d41e`)
         const accountResponse = await accountData.json()
 
-        const accountId = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${accountResponse.puuid}?api_key=RGAPI-ce106aa7-e482-4da2-9c16-5d3302488c67`)
+        const accountId = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${accountResponse.puuid}?api_key=RGAPI-0dfd3055-1457-436b-a872-62cff661d41e`)
         const accountIdResponse = await accountId.json()
 
-        const summonerProfile = await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accountResponse.puuid}?api_key=RGAPI-ce106aa7-e482-4da2-9c16-5d3302488c67`)
+        const summonerProfile = await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accountResponse.puuid}?api_key=RGAPI-0dfd3055-1457-436b-a872-62cff661d41e`)
         const summonerProfileResponse = await summonerProfile.json()
 
-        const rankedData = await fetch(`https://na1.api.riotgames.com/lol/league/v4/entries/by-puuid/${accountResponse.puuid}?api_key=RGAPI-ce106aa7-e482-4da2-9c16-5d3302488c67`)
+        const rankedData = await fetch(`https://na1.api.riotgames.com/lol/league/v4/entries/by-puuid/${accountResponse.puuid}?api_key=RGAPI-0dfd3055-1457-436b-a872-62cff661d41e`)
         const rankedDataResponse = await rankedData.json()
 
-        const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-ce106aa7-e482-4da2-9c16-5d3302488c67`)
+        const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-0dfd3055-1457-436b-a872-62cff661d41e`)
         const matchHistoryIdResponse = await matchHistoryIdData.json()
 
         const fetchMatchHistory = async (): Promise<MatchHistory[][]> => {
@@ -158,7 +158,7 @@ const Accounts = ({ versions }) => {
                 const sliced = matchHistoryIdResponse.slice(i, i + 5)
 
                 const sliceSize = await Promise.all(
-                    sliced.map((id: string) => fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${id}?api_key=RGAPI-ce106aa7-e482-4da2-9c16-5d3302488c67`)
+                    sliced.map((id: string) => fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${id}?api_key=RGAPI-0dfd3055-1457-436b-a872-62cff661d41e`)
                 .then(response => response.json()))
                 )
 
@@ -242,7 +242,7 @@ const Accounts = ({ versions }) => {
     }, [])
 
     return (
-        <section>
+        <section className='account-section'>
             <Nav />
             {loading == true  ? <p>Loading...</p> : <div className='account'>
                 <div className='account-search'>
@@ -327,14 +327,14 @@ const Accounts = ({ versions }) => {
                                 console.log('MATCH NEWS', data, id, id?.win, summonerSpells, id?.summoner1Id, id?.summoner2Id, spellIds, runes )
                                 // console.log('MATCHHH', fullMatchData, data)
                                 return (
-                                    <div className='account-match'>
-                                        <div className='account-match-stats'>
+                                    <div className='account-match-main account-match'>
+                                        <div className={`account-match-stats ${id?.win == true && id?.timePlayed > 180 ? 'account-match-leftside-v' : id?.win == false && id?.timePlayed > 180 ? 'account-match-leftside-d' : 'account-match-leftside-r'}`}>
                                             <p>{isNaN(Math.floor(duration / 60000)) != true ? `${Math.floor(duration / 60000)} min` : null}</p>
                                             <p>{data.info.gameMode}</p>
-                                            <p>{id?.win == true && id?.timePlayed > 180 ? 'VICTORY' : id?.win == false && id?.timePlayed > 180 ? 'DEFEAT' : 'REMAKE'}</p>
+                                            <p>{id?.win == true && id?.timePlayed > 180 ? <span className='account-match-stats-v'>VICTORY</span> : id?.win == false && id?.timePlayed > 180 ? <span className='account-match-stats-d'>DEFEAT</span> : <span className='account-match-stats-r'>REMAKE</span>}</p>
                                             <p>{isNaN(Math.floor(diff / (1000 * 60 * 60 * 24))) != true ? `${Math.floor(diff / (1000 * 60 * 60 * 24))} days ago` : null } </p>
                                         </div>
-                                        <div className='account-match'>
+                                        <div className={`account-match account-match-split ${id?.win == true && id?.timePlayed > 180 ? 'account-match-victory' : id?.win == false && id?.timePlayed > 180 ? 'account-match-defeat' : 'account-match-remake'}`}>
                                             <div className='account-match-champion'>
                                                 <img className='account-champion-pfp' src={`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/img/champion/${id?.championName}.png`} />
                                                 <p>{id?.champLevel}</p>
