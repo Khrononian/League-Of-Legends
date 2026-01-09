@@ -35,7 +35,8 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/champions/:key' element={<ChampionInformation versions={versions} />} />
           <Route path='/items' element={<Items />} />
-          <Route path='/accounts/:accountName' element={<Accounts versions={versions} />} />
+          {/* <Route path='/accounts/:accountName' element={<Accounts versions={versions} />} /> */}
+          <Route path='/accounts/' element={<Accounts versions={versions} />} />
         </Routes>
       </Router>  
     </main>
