@@ -20,3 +20,11 @@ nav ul li svg {
     cursor: pointer;
     align-self: center;
 }
+
+.nav-middle {
+    display: flex;
+    justify-content: space-between;
+    /* width: 200px; */
+    width: clamp(200px, 20vw, 350px);
+    font-size: clamp(1.2rem, 1.1vw, 2rem);
+}

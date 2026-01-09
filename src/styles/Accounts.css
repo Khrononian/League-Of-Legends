@@ -86,6 +86,9 @@
     width: 100px;
     height: 191px;
 }
+.account-match-stats p {
+    margin: .5em inherit;
+}
 .account-match-stats-v {
     color: lightgreen;
 }
@@ -216,7 +219,7 @@
     background: transparent;
     width: 35px;
     height: 35px;
-    border: 1px solid rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 5px;
 }
 
@@ -274,8 +277,8 @@
     .account-main {
         width: 95vw;
     }
-    .account-search form input {
-        width: 100%;
+    .account-search input {
+        width: 300px;
     }
 
     .account-match-main {
@@ -308,15 +311,15 @@
     .account-main {
         width: 95vw;
     }
-    .account-match {
-        width: fit-content;
-        margin: 0 auto;
+    .account-search input {
+        width: 500px;
     }
+    
     .account-match-split {
         column-gap: 10px;
     }
     .account-match-stats {
-        width: 70px;
+        width: 75px;
     }
     .account-match-players p {
         width: 50px;
@@ -326,8 +329,19 @@
         display: none
     }
 }
-
+@media (min-width: 701px) and (max-width: 749px) {
+    .account-match {
+        width: 655px;
+        margin: 0 auto;
+    }
+}
+@media (min-width: 1050px) {
+    .account-search input {
+        width: 600px;
+    }
+}
 @media (min-width: 1250px) {
+    
     .account-match {
         width: 1150px;
         margin: 0 auto;
