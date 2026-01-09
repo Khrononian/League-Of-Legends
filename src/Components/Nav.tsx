@@ -13,12 +13,21 @@ const Nav = () => {
                     <img src='https://img.icons8.com/?size=48&id=V1Ja402KSwyz&format=png' />
                 </Link>
             </div>
-            <Link to={'/items'}>
+            <div className='nav-middle'>
+                <Link to={'/items'}>
+                <li>Items</li>
+                </Link>
+                {/* <Link to={'/accounts/:selbullNA1'}> */}
+                <Link to={'/accounts/'}>
+                    <li>Accounts</li>
+                </Link>
+            </div>
+            {/* <Link to={'/items'}>
                 <li>Items</li>
             </Link>
             <Link to={'/accounts/:selbullNA1'}>
                 <li>Accounts</li>
-            </Link>
+            </Link> */}
             <li>
                 <HugeiconsIcon 
                     icon={Menu02Icon} 
