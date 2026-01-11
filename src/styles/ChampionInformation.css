@@ -133,3 +133,15 @@
 .active {
     fill: #C8AA6E;
 }
+
+@media (min-width: 350px) and (max-width: 585px) {
+    .champion-abilities div {
+        /* width: 50px; */
+        width: clamp(50px, 12vw, 90px);
+        font-size: .5rem;
+    }
+    .champion-abilities div img {
+        /* width: 100%; */
+        width: clamp(50px, 12vw, 90px);
+    }
+}

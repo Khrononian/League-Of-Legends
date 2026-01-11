@@ -61,6 +61,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 15px;
 }
 
 .account-matches {
@@ -86,9 +87,7 @@
     width: 100px;
     height: 191px;
 }
-.account-match-stats p {
-    margin: .5em inherit;
-}
+
 .account-match-stats-v {
     color: lightgreen;
 }
@@ -320,6 +319,9 @@
     }
     .account-match-stats {
         width: 75px;
+    }
+    .account-match-stats p {
+        margin: .8em 0;
     }
     .account-match-players p {
         width: 50px;

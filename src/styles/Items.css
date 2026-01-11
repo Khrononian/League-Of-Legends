@@ -48,7 +48,7 @@
 
 .block {
     position: absolute;
-    
+    pointer-events: none;
     /* width: 400px; */
     /* height: 300px; */
     /* width: fit-content; */
