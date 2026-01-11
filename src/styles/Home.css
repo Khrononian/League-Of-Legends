@@ -1,9 +1,23 @@
-.home {
-    /* width: 90%; */
+/* @font-face {
+  font-family: 'Beaufort';
+  src: url('../league-of-legends-font/League.otf') format('woff2');
+} */
+@font-face {
+  font-family: 'Beaufort';
+  src: url('../League/League.otf');
 }
+
+body {
+    font-family: 'Beaufort', serif;
+}
+
 header {
     color: black;
     margin-top: 5rem;
+}
+header h1 {
+    font-size: 3.5rem;
+    margin: .3em 0;
 }
 
 .desc {
