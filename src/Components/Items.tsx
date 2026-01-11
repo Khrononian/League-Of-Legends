@@ -30,37 +30,34 @@ const Items = () => {
         description: '', 
         priceTotal: 0
     })
-    const [x, setX] = useState<number >()
-    const [y, setY] = useState<number >()
+    const [x, setX] = useState<number >(0)
+    const [y, setY] = useState<number >(0)
+    const [placement, setPlacement] = useState('')
     const refPos = useRef<HTMLDivElement | null>(null)
+    const toolTipRef = useRef<HTMLDivElement>(null)
 
-    
 
     const getElementPos = (event: React.MouseEvent, data: ItemValues) => {
-        const block = document.querySelector('.block') as HTMLElement
         const hoveredTarget = event.currentTarget.getBoundingClientRect()
-        const blockRect = block.getBoundingClientRect()
+        const toolTipRect = toolTipRef.current?.getBoundingClientRect()
+        
+        
+        const viewPortWidth = window.innerWidth;
+        const spaceRight = viewPortWidth - hoveredTarget.right
+        const side = spaceRight >= 260 ? 'right' : 'left'
 
-        const observer = new ResizeObserver(entries => {
-            const entry = entries[0]
-            const height = entry.contentRect.height + 200
-            // const y = hoveredTarget.top + window.scrollY
-            let y = hoveredTarget.top + window.scrollY - blockRect.height - 8
 
-            
+        // setY(y + window.scrollY)
+        // setY(placeAbove ? hoveredTarget.top - 180 - 8 : hoveredTarget.bottom + 8 + window.scrollY)
 
-            setX(hoveredTarget.left + window.scrollX)
-            setY(y)
 
-            console.log('OBSERVE INNER', height)
-        })
-
+        setX(side == 'right' ? hoveredTarget.right + 8 : hoveredTarget.left - 260 - 8)
+        setY(hoveredTarget.top - 150 + window.scrollY)
+        if (side == 'left') setX(prev => prev - toolTipRect?.width)
+        
+        console.log('VALUES', x, y, event.clientX)
+        
         setHoveredItem(data)
-
-        console.log('OBSERVE', event.currentTarget, observer.observe(block))
-
-        // setX(hoveredTarget.left + window.scrollX + -20 )
-        // setY(hoveredTarget.top + window.scrollY + -300 )
         
         // console.log('HOVER', event.currentTarget, event.currentTarget.getBoundingClientRect())
      }
@@ -115,7 +112,7 @@ const Items = () => {
 
                         if (values.inStore == true && values.displayInItemSets == true && wordInString[0] !== 'Elixir' && wordInString[1] !== 'Potion') {
                         // if (values.inStore == true && values.active == true) {
-                            console.log('ITEMS', values)
+                            // console.log('ITEMS', values)
                         return (
                             // <div key={index} onMouseEnter={() => setHoveredItem(values)} onMouseLeave={() => setHoveredItem({iconPath: '', name: '', description: '', priceTotal: 0})}>
                             <div key={index} ref={refPos} onMouseEnter={(event) => getElementPos(event, values)} onMouseLeave={(event) => clearElementPos(event)}>
@@ -128,7 +125,7 @@ const Items = () => {
                     })}
                 </div>
 
-                <div className='block' style={{ top: y, left: x }} id='item-data' >
+                <div ref={toolTipRef} className={`block ${placement}`} style={{ top: y, left: x }} id='item-data' >
                     <div className='first-block'>
                         <div className='first-inner'>
                             <img src={`https://raw.communitydragon.org/latest/game/assets/items/icons2d/${hoveredItem.iconPath.split('/').pop()?.toLocaleLowerCase()}`} />
