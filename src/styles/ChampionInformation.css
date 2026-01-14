@@ -1,5 +1,5 @@
 .champion-header {
-    background: darkblue;
+    background: #0a1428;
     text-align: left;
 }
 .champion-header img {
@@ -71,7 +71,7 @@
 .champion-ability {
     display: flex;
     flex-direction: column;
-    background: darkblue;
+    background: #0a1428;
     padding: 0 2rem;
 }
 .champion-ability h2 {

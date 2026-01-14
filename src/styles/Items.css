@@ -1,6 +1,7 @@
 .items-container {
     position: relative;
     width: 95%;
+    margin: 0 auto;
 }
 .items-search, .account-search {
     display: flex;
@@ -52,20 +53,17 @@
     /* width: 400px; */
     /* height: 300px; */
     /* width: fit-content; */
-    width: clamp();
-    /* height: fit-content; */
-    background: red;
+    /* width: clamp(); */
+    background: #111111;
     padding: .5em;
-    /* transform: translateY(calc(-30% - 50px)); */
-    /* transform: translateX(0vw); */
 }
 .block div > * {
-    color: black;
+    /* color: white; */
 }
 .first-block {
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px white solid;
+    border-bottom: 1px #C8AA6E solid;
     padding-bottom: 1em;
 }
 .first-inner {
@@ -74,13 +72,49 @@
     align-items: start;
     /* align-content: start; */
 }
+.first-inner h5 {
+    font-size: 1.05rem;
+    color: #ece2a6;
+}
 .first-inner h5, .first-inner p {
     margin: 0;
+    margin-left: .5em;
+}
+.first-inner p {
+    color: #C8AA6E;
 }
 .first-data {
+    display: flex;
+    flex-direction: column;
     text-align: left;
     height: fit-content;
+    
 }
 .first-data p {
     margin: 8px 0;
+}
+.first-data p maintext stats attention,
+.first-data p maintext passive {
+    color: #ece2a6;
+}
+.first-data p maintext {
+    color: #A88F5C;
+}
+
+.showDiv {
+    display: block;
+}
+.hideDiv {
+    display: none;
+}
+
+@media (min-width: 350px) and (max-width: 625px) {
+    .items-search form input {
+        width: 300px;
+    }
+}
+@media (min-width: 626px) {
+    .items-search form input {
+        width: 500px;
+    }
 }
