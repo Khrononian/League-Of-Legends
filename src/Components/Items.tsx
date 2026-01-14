@@ -32,34 +32,38 @@ const Items = () => {
     })
     const [x, setX] = useState<number >(0)
     const [y, setY] = useState<number >(0)
-    const [placement, setPlacement] = useState('')
+    const [display, setDisplay] = useState(false)
     const refPos = useRef<HTMLDivElement | null>(null)
     const toolTipRef = useRef<HTMLDivElement>(null)
+    const parentRef = useRef<HTMLDivElement>(null)
 
 
     const getElementPos = (event: React.MouseEvent, data: ItemValues) => {
         const hoveredTarget = event.currentTarget.getBoundingClientRect()
         const toolTipRect = toolTipRef.current?.getBoundingClientRect()
-        
+        const imgName = event.currentTarget.querySelector('div')?.querySelector('h5')
         
         const viewPortWidth = window.innerWidth;
+        const viewPortHeight = window.innerHeight;
         const spaceRight = viewPortWidth - hoveredTarget.right
-        const side = spaceRight >= 260 ? 'right' : 'left'
+        // const side = spaceRight >= 260 ? 'right' : 'left'
+        const side = spaceRight >= 300 ? 'right' : 'left'
+        const spaceTop = viewPortHeight - hoveredTarget.top
+        // const top = spaceTop >= 285 ? 'bottom' : 'top'
+        const top = spaceTop >= 350 ? 'bottom' : 'top'
 
-
-        // setY(y + window.scrollY)
-        // setY(placeAbove ? hoveredTarget.top - 180 - 8 : hoveredTarget.bottom + 8 + window.scrollY)
-
-
-        setX(side == 'right' ? hoveredTarget.right + 8 : hoveredTarget.left - 260 - 8)
-        setY(hoveredTarget.top - 150 + window.scrollY)
-        if (side == 'left') setX(prev => prev - toolTipRect?.width)
+        if (display == true) return
         
-        console.log('VALUES', x, y, event.clientX)
+        setX(side == 'right' ? hoveredTarget.right - 10 : hoveredTarget.left - 260 - 8)
+        // setY(top == 'bottom' ? hoveredTarget.top - 150 + window.scrollY : hoveredTarget.bottom - 285 - toolTipRect?.height + window.scrollY)
+        // setY(top == 'bottom' && imgName != 'Dream Maker' ? hoveredTarget.top - 150 + window.scrollY : hoveredTarget.bottom - ((window.innerHeight / 2.1) - toolTipRect?.height) + window.scrollY)
+        setY(top == 'bottom' ? hoveredTarget.top - 150 + window.scrollY : hoveredTarget.bottom - ((window.innerHeight / 2.1) - toolTipRect?.height) + window.scrollY)
+        console.log('SET NEW', x, y)
+        console.log('VALUESW', x, y, viewPortWidth, spaceRight, hoveredTarget.right)
+        console.log('HEIGHT VALUES', viewPortHeight, spaceTop, top, toolTipRect?.height, hoveredTarget.bottom)
         
         setHoveredItem(data)
-        
-        // console.log('HOVER', event.currentTarget, event.currentTarget.getBoundingClientRect())
+        setDisplay(true)
      }
 
     const parseDescription = (desc: string) => {
@@ -71,8 +75,12 @@ const Items = () => {
         return /<passive/.test(desc) == false && /<br>/.test(desc) == true ? doc.body.innerHTML.replace(/<br\s*\/?>/gi, '') : doc.body.innerHTML
     }
 
-    const clearElementPos = (event) => {
+    const clearElementPos = () => {
         setHoveredItem({iconPath: '', name: '', description: '', priceTotal: 0})
+        setDisplay(false)
+        console.log('SET', x, y)
+        // setX(0)
+        // setY(0)
     }
 
     useEffect(() => {
@@ -96,7 +104,7 @@ const Items = () => {
     return (
         <section>
             <Nav />
-            <div className='items-container'>
+            <div ref={parentRef} className='items-container' >
                 <div className='items-search'>
                     <form id='form' role='search'>
                         <input type='search' id='query'
@@ -106,7 +114,7 @@ const Items = () => {
                     </form>
                 </div>
                 <div className='items'>
-                    {Object.entries(items).sort(([, a], [, b]) => a.totalPrice - b.totalPrice).map(([index, item]) => {
+                    {Object.entries(items).sort(([, a], [, b]) => a.priceTotal - b.priceTotal).map(([index, item]) => {
                         const values = item as ItemValues
                         const wordInString = values.name.trim().split(/\s+/)
 
@@ -125,7 +133,7 @@ const Items = () => {
                     })}
                 </div>
 
-                <div ref={toolTipRef} className={`block ${placement}`} style={{ top: y, left: x }} id='item-data' >
+                <div ref={toolTipRef} className={`block ${display ? 'showDiv' : 'hideDiv'}`} style={{ top: y, left: x }} id='item-data' >
                     <div className='first-block'>
                         <div className='first-inner'>
                             <img src={`https://raw.communitydragon.org/latest/game/assets/items/icons2d/${hoveredItem.iconPath.split('/').pop()?.toLocaleLowerCase()}`} />
@@ -135,7 +143,7 @@ const Items = () => {
                         <div className='first-inner'>
                             <HugeiconsIcon
                                 size={28}
-                                color="#f8e71c"
+                                color="#C8AA6E"
                                 strokeWidth={2}
                                 icon={Coins02Icon } 
                             />
