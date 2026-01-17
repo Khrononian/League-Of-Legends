@@ -5,7 +5,7 @@ Features include:
 * Summoner search
 * Displays current rank, tier, LP, win/loss ratios and KDA
 * Recent match hitory list with game mode, outcome, duration, champion played and match stats
-[Live Link]()
+* [Live Link]()
 
  ## Preview
  ![League of Legends Thumbnail]()
