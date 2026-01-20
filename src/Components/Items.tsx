@@ -78,9 +78,6 @@ const Items = () => {
     const clearElementPos = () => {
         setHoveredItem({iconPath: '', name: '', description: '', priceTotal: 0})
         setDisplay(false)
-        console.log('SET', x, y)
-        // setX(0)
-        // setY(0)
     }
 
     useEffect(() => {
@@ -91,7 +88,6 @@ const Items = () => {
             // const itemIconData = await fetch(`https://raw.communitydragon.org/latest/game/assets/items/icons2d/${NAME_HERE}.png`)
             
             setItems(itemResponse)
-            // console.log('ITEMS', itemResponse)
             for (let i = 0; i < itemResponse.length; i++) {
                 
                 if (itemResponse[i].inStore == true) console.log('AFTER ITS', itemResponse[i])
@@ -123,7 +119,7 @@ const Items = () => {
                             // console.log('ITEMS', values)
                         return (
                             // <div key={index} onMouseEnter={() => setHoveredItem(values)} onMouseLeave={() => setHoveredItem({iconPath: '', name: '', description: '', priceTotal: 0})}>
-                            <div key={index} ref={refPos} onMouseEnter={(event) => getElementPos(event, values)} onMouseLeave={(event) => clearElementPos(event)}>
+                            <div key={index} ref={refPos} onMouseEnter={(event) => getElementPos(event, values)} onMouseLeave={(event) => clearElementPos()}>
                                 <div>
                                     <img src={`https://raw.communitydragon.org/latest/game/assets/items/icons2d/${values.iconPath.split('/').pop()?.toLocaleLowerCase()}`} alt={values.name} />
                                     

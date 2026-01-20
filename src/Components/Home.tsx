@@ -3,15 +3,6 @@ import { Link } from 'react-router-dom'
 import Nav from './Nav'
 import '../styles/Home.css'
 
-// type championInfo = {
-//   title: string,
-//   image: {
-//     full: string
-//     sprite: string
-//   },
-//   tags: string[]
-// }
-
 const Home = () => {
     const [versions, setVersions] = useState([])
     const [champions, setChampions] = useState({})
@@ -52,15 +43,6 @@ const Home = () => {
             </header>
             <div className='champions'>
                 {Object.entries(champions).map(([key]) => {
-                    // const v = value as championInfo
-
-                    // const singleChampionsData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/en_US/champion/${key}.json`)
-                    // const singleChampionsResponse = await singleChampionsData.json()
-
-                    // console.log('Images', singleChampionsResponse)
-
-                    console.log('V', versions)
-                    // console.log('STATE1', singleChampion)
                     return (
                         <Link to={`/champions/${key}`} onClick={() => fetchChampionData(key)} state={{ singleChampion, key, versions }} className='champion-card' key={key}>
                             <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${key}_${0}.jpg`} style={{objectFit: 'cover'}} />

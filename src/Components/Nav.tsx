@@ -17,17 +17,10 @@ const Nav = () => {
                 <Link to={'/items'}>
                 <li>Items</li>
                 </Link>
-                {/* <Link to={'/accounts/:selbullNA1'}> */}
                 <Link to={'/accounts/'}>
                     <li>Accounts</li>
                 </Link>
             </div>
-            {/* <Link to={'/items'}>
-                <li>Items</li>
-            </Link>
-            <Link to={'/accounts/:selbullNA1'}>
-                <li>Accounts</li>
-            </Link> */}
             <li>
                 <HugeiconsIcon 
                     icon={Menu02Icon} 

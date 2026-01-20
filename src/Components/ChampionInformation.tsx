@@ -45,7 +45,11 @@ type ChampionData = {
     }
 }
 
-const ChampionInformation = ({ versions }) => {
+interface Props {
+    versions: string[]
+}
+
+const ChampionInformation: React.FC<Props> = ({ versions }) => {
     const [defaultAbility, setDefaultAbility] = useState(true)
     const [loading, setLoading] = useState(true)
     const [ability, setAbility] = useState('')
@@ -102,9 +106,6 @@ const ChampionInformation = ({ versions }) => {
     }, [])
 
     const changeAbility = (event: React.MouseEvent) => {
-        console.log('AATROX', event.currentTarget.id, event.currentTarget.key)
-        // setAbility(event.target.id)
-        
         if (event.currentTarget.id == 'passive') setAbility('passive')
         else setAbility('')
         
