@@ -8,7 +8,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 function App() {
   const [versions, setVersions] = useState<string[]>([])
-  const [champions, setChampions] = useState({})
+  // const [champions, setChampions] = useState({})
 
   useEffect(() => {
     const showChampionData = async () => {
@@ -18,15 +18,13 @@ function App() {
       const championResponse = await championData.json()
 
       setVersions(prev => prev.concat(versionResponse))
-      setChampions(championResponse.data)
+      // setChampions(championResponse.data)
       console.log('OK', versionResponse, championResponse)
       console.log('AATROX', versionResponse, championResponse)
     }
 
     showChampionData()
   }, [])
-
-  // `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${singleChampion.name}_${0}.jpg` USE THIS FOR MAIN PAGE IMAGES
 
   return (
     <main>
