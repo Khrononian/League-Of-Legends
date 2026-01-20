@@ -41,7 +41,6 @@ const Items = () => {
     const getElementPos = (event: React.MouseEvent, data: ItemValues) => {
         const hoveredTarget = event.currentTarget.getBoundingClientRect()
         const toolTipRect = toolTipRef.current?.getBoundingClientRect()
-        const imgName = event.currentTarget.querySelector('div')?.querySelector('h5')
         
         const viewPortWidth = window.innerWidth;
         const viewPortHeight = window.innerHeight;
@@ -57,7 +56,7 @@ const Items = () => {
         setX(side == 'right' ? hoveredTarget.right - 10 : hoveredTarget.left - 260 - 8)
         // setY(top == 'bottom' ? hoveredTarget.top - 150 + window.scrollY : hoveredTarget.bottom - 285 - toolTipRect?.height + window.scrollY)
         // setY(top == 'bottom' && imgName != 'Dream Maker' ? hoveredTarget.top - 150 + window.scrollY : hoveredTarget.bottom - ((window.innerHeight / 2.1) - toolTipRect?.height) + window.scrollY)
-        setY(top == 'bottom' ? hoveredTarget.top - 150 + window.scrollY : hoveredTarget.bottom - ((window.innerHeight / 2.1) - toolTipRect?.height) + window.scrollY)
+        setY(top == 'bottom' ? hoveredTarget.top - 150 + window.scrollY : hoveredTarget.bottom - ((window.innerHeight / 2.1) - (toolTipRect?.height ?? 0)) + window.scrollY)
         console.log('SET NEW', x, y)
         console.log('VALUESW', x, y, viewPortWidth, spaceRight, hoveredTarget.right)
         console.log('HEIGHT VALUES', viewPortHeight, spaceTop, top, toolTipRect?.height, hoveredTarget.bottom)
@@ -110,7 +109,7 @@ const Items = () => {
                     </form>
                 </div>
                 <div className='items'>
-                    {Object.entries(items).sort(([, a], [, b]) => a.priceTotal - b.priceTotal).map(([index, item]) => {
+                    {Object.entries(items as Record<number, ItemValues>).sort(([, a], [, b]) => a.priceTotal - b.priceTotal).map(([index, item]) => {
                         const values = item as ItemValues
                         const wordInString = values.name.trim().split(/\s+/)
 
@@ -119,7 +118,7 @@ const Items = () => {
                             // console.log('ITEMS', values)
                         return (
                             // <div key={index} onMouseEnter={() => setHoveredItem(values)} onMouseLeave={() => setHoveredItem({iconPath: '', name: '', description: '', priceTotal: 0})}>
-                            <div key={index} ref={refPos} onMouseEnter={(event) => getElementPos(event, values)} onMouseLeave={(event) => clearElementPos()}>
+                            <div key={index} ref={refPos} onMouseEnter={(event) => getElementPos(event, values)} onMouseLeave={() => clearElementPos()}>
                                 <div>
                                     <img src={`https://raw.communitydragon.org/latest/game/assets/items/icons2d/${values.iconPath.split('/').pop()?.toLocaleLowerCase()}`} alt={values.name} />
                                     

@@ -86,7 +86,7 @@ const ChampionInformation: React.FC<Props> = ({ versions }) => {
         {role: 'Fighter', icon: Sword03Icon}, {role: 'Mage', icon: BookOpen01Icon}, {role: 'Tank', icon: KnightShieldIcon},
         {role: 'Marksman', icon: ArcherIcon}, {role: 'Assassin', icon: Knife02Icon}, {role: 'Support', icon: LanternIcon}
     ]
-    const champName = useParams<{ champName: string }>()
+    const champName = useParams<{ champName: string, key: string }>()
 
     useEffect(() => {
         const getChampionData = async (championName: Readonly<Partial<{ champName: string, key: string }>>) => {
@@ -134,7 +134,7 @@ const ChampionInformation: React.FC<Props> = ({ versions }) => {
                             <div className='champion-stats-inner'>
                                 <div className={`champion-stats-icons ${!singleChampion.tags[1] ? 'champion-stats-icons-center' : ''}`} >
                                     <HugeiconsIcon
-                                        icon={roleIcons.find((roles) => roles.role == singleChampion.tags[0])?.icon}
+                                        icon={roleIcons.find((roles) => roles.role == singleChampion.tags[0])?.icon ?? roleIcons[0].icon}
                                         size={34}
                                         color="#c8aa6e"
                                         strokeWidth={2}
@@ -142,7 +142,7 @@ const ChampionInformation: React.FC<Props> = ({ versions }) => {
                                     
                                     {singleChampion.tags[1] ?
                                         <HugeiconsIcon
-                                            icon={roleIcons.find((roles) => roles.role == singleChampion.tags[1])?.icon}
+                                            icon={roleIcons.find((roles) => roles.role == singleChampion.tags[1])?.icon ?? roleIcons[1].icon}
                                             size={34}
                                             color="#c8aa6e"
                                             strokeWidth={2}
