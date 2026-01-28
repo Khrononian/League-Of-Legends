@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+// import { defineSecret } from "firebase-functions/params";
+import { getAccount } from '../../functions/src/apis/riot'
 import '../styles/Accounts.css'
 import Nav from './Nav'
 import iron from '../rankicons/7574-iron.png'
@@ -120,8 +122,11 @@ interface Props {
     versions: string[]
 }
 
+
 const Accounts: React.FC<Props> = ({ versions }) => {
     // const [searchedName, setSearchedName] = useState('')
+    // const [summonerName, setSummonerName] = useState('uanas')
+    // const [summonerName, setSummonerName] = useState('selbull')
     const [account, setAccount] = useState<Account>({
         gameName: '',
         puuid: ''
@@ -144,6 +149,7 @@ const Accounts: React.FC<Props> = ({ versions }) => {
     const [spellIds, setSpellIds] = useState<number[][]>([[0, 0]]) // USE THIS TO PUSH THE SUMMONER SPELL IDS HERE
     const [loading, setLoading] = useState(true)
     // const [spellLoading, setSpellLoading] = useState(true)
+    // const FIREBASE_SECRET_KEY = defineSecret("FIREBASE_SECRET_KEY")
     
     const fetchAccountData = async (accountName: string) => {
         const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${accountName}/NA1?api_key=RGAPI-c15eb42b-cf06-4c5c-bfce-08be52b5c81d`)
@@ -160,6 +166,9 @@ const Accounts: React.FC<Props> = ({ versions }) => {
 
         const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-c15eb42b-cf06-4c5c-bfce-08be52b5c81d`)
         const matchHistoryIdResponse = await matchHistoryIdData.json()
+
+        const accountResult = await getAccount('selbull')
+        console.log('FIREOUTER', accountResult)
 
         const fetchMatchHistory = async (): Promise<MatchHistory[][]> => {
             const matchHistoryResults = []
@@ -184,11 +193,15 @@ const Accounts: React.FC<Props> = ({ versions }) => {
                 await new Promise(resolve => setTimeout(resolve, 800))
             }
             console.log('MATA', matchHistoryResults)
+            // console.log('FireBASE', test)
+            
+            // console.log('FireBASE', )
             return matchHistoryResults
         }
 
         const runesData = await fetch(`https://ddragon.leagueoflegends.com/cdn/15.23.1/data/en_US/runesReforged.json`) 
         const runesResponse = await runesData.json()
+
 
         setAccount(accountIdResponse)
         setSummonerProfile(summonerProfileResponse)
@@ -297,6 +310,7 @@ const Accounts: React.FC<Props> = ({ versions }) => {
 
         console.log('INPUT', input)
         setLoading(true)
+        // setSummonerName(input?.value)
         const accountData = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${input?.value}/NA1?api_key=RGAPI-c15eb42b-cf06-4c5c-bfce-08be52b5c81d`)
         const accountResponse = await accountData.json()
 
