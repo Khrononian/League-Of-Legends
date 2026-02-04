@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 // import { defineSecret } from "firebase-functions/params";
-import { getAccount } from '../../functions/src/apis/riot'
+import { getAccount, getAccountId, getAccountProfile } from '../../functions/src/apis/riot'
 import '../styles/Accounts.css'
 import Nav from './Nav'
 import iron from '../rankicons/7574-iron.png'
@@ -143,7 +143,7 @@ const Accounts: React.FC<Props> = ({ versions }) => {
     // const [summonerSpells, setSummonerSpells] = useState<Spells>({})
     const [summonerSpells, setSummonerSpells] = useState({})
     // const [summonerSpells, setSummonerSpells] = useState<Spells>({key: '', id: ''})
-    // const [summonerSpells, setSummonerSpells] = useState({})
+    // const [summonerName, setSummonerName] = useState('selbull')
     const [gameIds, setGameIds] = useState<number[]>([])
     const [runes, setRunes] = useState<Runes[]>([])
     const [spellIds, setSpellIds] = useState<number[][]>([[0, 0]]) // USE THIS TO PUSH THE SUMMONER SPELL IDS HERE
@@ -167,8 +167,12 @@ const Accounts: React.FC<Props> = ({ versions }) => {
         const matchHistoryIdData = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountResponse.puuid}/ids?start=0&count=20&api_key=RGAPI-c15eb42b-cf06-4c5c-bfce-08be52b5c81d`)
         const matchHistoryIdResponse = await matchHistoryIdData.json()
 
-        const accountResult = await getAccount('selbull')
-        console.log('FIREOUTER', accountResult)
+        const mainAccount = await getAccount('selbull')
+        if (!mainAccount.puuid) return
+        // const mainAccountId = await getAccountId(mainAccount.puuid)
+        // const mainAccountId = await getAccountId(mainAccount.puuid)
+        const accountProfile = await getAccountProfile(mainAccount.puuid)
+        console.log('FIREOUTER', mainAccount, mainAccount.puuid, accountProfile, accountProfile.profileResponse)
 
         const fetchMatchHistory = async (): Promise<MatchHistory[][]> => {
             const matchHistoryResults = []
@@ -192,17 +196,18 @@ const Accounts: React.FC<Props> = ({ versions }) => {
                 
                 await new Promise(resolve => setTimeout(resolve, 800))
             }
-            console.log('MATA', matchHistoryResults)
+            console.log('MATA', matchHistoryResults) 
             // console.log('FireBASE', test)
             
             // console.log('FireBASE', )
             return matchHistoryResults
         }
 
-        const runesData = await fetch(`https://ddragon.leagueoflegends.com/cdn/15.23.1/data/en_US/runesReforged.json`) 
+        const runesData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/en_US/runesReforged.json`) 
         const runesResponse = await runesData.json()
 
-
+        console.log('FIRENEWOUTER', runesResponse)
+        
         setAccount(accountIdResponse)
         setSummonerProfile(summonerProfileResponse)
         setRankedStats(rankedDataResponse)
