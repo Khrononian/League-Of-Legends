@@ -165,12 +165,23 @@ export const getAccountProfile = onRequest(
                 return
             }
 
+            const versionsResponse = await fetch(`https://ddragon.leagueoflegends.com/api/versions.json`)
+            const versionsData = await versionsResponse.json()
+            
+            const accountIdResponse = await fetch(
+                `https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${encodeURIComponent(
+                    puuid
+                )}?api_key=${apiKey}`
+            )
+            const accountIdDataResponse = await accountIdResponse.json()
+
             const accountProfileResponse = await fetch(
                 `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${encodeURIComponent(
                     puuid
                 )}?api_key=${apiKey}`
             )
             const profileResponse = await accountProfileResponse.json()
+            
             const accountRankedResponse = await fetch(
                 `https://na1.api.riotgames.com/lol/league/v4/entries/by-puuid/${encodeURIComponent(
                     puuid
@@ -185,22 +196,12 @@ export const getAccountProfile = onRequest(
             )
             const matchHistoryResponse = await accountMatchHistory.json()
 
-            // const allApis = Promise.all([accountProfileResponse, accountRankedResponse, accountMatchHistory].map(async (url) => {
-            //     await url.json()
-            // }))
+            const runesData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versionsData[0]}/data/en_US/runesReforged.json`)
+            const runesResponse = await runesData.json()
 
             const fetchMatchHistory = async (): Promise<MatchHistory[][]> => {
                 const matchHistoryResults = []
 
-                // return Promise.all(
-                //     matchHistoryResponse.slice(0, 5).map(async (id: string) => {
-                //         const matchResponse = await fetch(
-                //             `https://americas.api.riotgames.com/lol/match/v5/matches/${id}?api_key=${apiKey}`
-                //         )
-
-                //         return matchResponse.json()
-                //     })
-                // )
                 for (let i = 0; i < matchHistoryResponse.length; i += 5) {
                     const sliced = matchHistoryResponse.slice(i, i + 5)
 
@@ -212,24 +213,13 @@ export const getAccountProfile = onRequest(
                     sliceSize.map(item => delete item.metadata)
                     matchHistoryResults.push(sliceSize)
 
-                    // matchHistoryResults.map((item, index) => {
-                    //     console.log('FULLSTRAIN', item, index)
-
-                    //     item.map(element => console.log('FULLINNER', element))
-                    // })
-                    
                     await new Promise(resolve => setTimeout(resolve, 800))
                 }
 
                 return matchHistoryResults
-                // return Promise.all(matchHistoryResults)
-                
             }
             const fetchedResults = await fetchMatchHistory()
-            // res.status(200).json(profileResponse)
-            // res.status(200).json(rankedResponse) 
-            res.status(200).json({ profileResponse, rankedResponse, matchHistoryResponse, fetchedResults }) 
-            // res.status(200).json({ allApis }) 
+            res.status(200).json({ accountIdDataResponse, profileResponse, rankedResponse, fetchedResults, runesResponse }) 
             return
         } catch (error) {
             console.error(error)
