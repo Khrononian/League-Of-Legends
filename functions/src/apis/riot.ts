@@ -6,7 +6,6 @@ export const getAccount = async (summoner: string) => {
             summoner
         )}`
         
-        // `https://us-central1-lol-apis-c196.cloudfunctions.net/getAccount?summoner=selbull`
     )
     console.log('PUUID NAME', summoner, res)
     if (!res.ok) throw new Error (`Failed to fetch account ${res.status}`)
@@ -38,5 +37,3 @@ export const getAccountProfile = async (puuid: string) => {
     
     return res.json()
 }
-
-// RGAPI-7ce2128b-fac4-4454-9187-100434cee18b
