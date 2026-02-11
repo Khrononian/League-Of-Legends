@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import '../styles/ChampionInformation.css'
 
-// import { Sword }
 import Nav from './Nav'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Sword03Icon, BookOpen01Icon, KnightShieldIcon, ArcherIcon, Knife02Icon, LanternIcon } from '@hugeicons/core-free-icons'
+import Loading from './Loading'
 
 type SingleChampion = {
     title: string,
@@ -86,20 +86,17 @@ const ChampionInformation: React.FC<Props> = ({ versions }) => {
         {role: 'Fighter', icon: Sword03Icon}, {role: 'Mage', icon: BookOpen01Icon}, {role: 'Tank', icon: KnightShieldIcon},
         {role: 'Marksman', icon: ArcherIcon}, {role: 'Assassin', icon: Knife02Icon}, {role: 'Support', icon: LanternIcon}
     ]
+    
     const champName = useParams<{ champName: string, key: string }>()
+    const [image, setImage] = useState<string | undefined>(`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champName.key}_0.jpg`)
 
     useEffect(() => {
         const getChampionData = async (championName: Readonly<Partial<{ champName: string, key: string }>>) => {
-            console.log('INNER', championName)
-
             const singleChampionsData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/en_US/champion/${champName.key}.json`)
             const singleChampionsResponse = await singleChampionsData.json()
 
-            console.log('Click', championName, singleChampionsResponse, singleChampionsResponse.data[`${championName.key}`])
-
             setSingleChampion(singleChampionsResponse.data[`${championName.key}`])
             setLoading(false)
-            console.log('STATE', singleChampion, singleChampionsResponse.data[`${championName}`])
         }
 
         getChampionData(champName)
@@ -113,14 +110,10 @@ const ChampionInformation: React.FC<Props> = ({ versions }) => {
         setAbilityId(Number(event.currentTarget.id))
     }
     
-    // const singleChampion = (location.state )
-    console.log('YEEE', singleChampion, champName, singleChampion.tags[0])
-
-
     return (
         <section>
             <Nav />
-            {loading == true ? <p>Loading...</p> : <div className='champion-main'>
+            {loading == true ? <Loading /> : <div className='champion-main'>
                 <div className='champion-header'>
                     <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${singleChampion.name}_0.jpg`} alt='Champion Splash' />
                     <div className='champion-header-inner'>
@@ -207,10 +200,10 @@ const ChampionInformation: React.FC<Props> = ({ versions }) => {
                 <div className='champion-skins'>
                     <h2>AVAILABLE SKINS</h2>
                     <div className='champion-skin'>
-                        <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${singleChampion.name}_0.jpg`} alt='Main skin' />
+                        <img src={image} alt='Main skin' />
                         <div className='champion-splashes'>
                             {singleChampion.skins.map((elements: {num: number, name: string}) => (
-                                <div id={elements.name}>
+                                <div id={elements.name} onClick={(event: React.MouseEvent) => setImage(event.currentTarget.querySelector('img')?.src)}>
                                     <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${singleChampion.name}_${elements.num}.jpg`} alt={elements.name} />
                                     <p>{elements.name == 'default' ? singleChampion.name : elements.name}</p>
                                 </div>
