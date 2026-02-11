@@ -7,10 +7,21 @@
     /* margin: inherit auto; */
 }
 
+.loading {
+    min-height: 94.6vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .account-main {
     width: 90vw;
     /* background: green; */
     margin: 0 auto;
+}
+.account-search button {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
 }
 .account-stats {
     /* background: red; */
@@ -48,6 +59,7 @@
 }
 .account-profile div p {
     margin: 0;
+    margin-left: .5em;
 }
 .account-ranks-pfp {
     width: 105px;
@@ -166,6 +178,9 @@
     margin: 0;
     font-size: 1.1rem;
     font-weight: 500;
+}
+.account-match-ratios p:last-child {
+    color: #ffd1cb;
 }
 
 .account-match-runes {

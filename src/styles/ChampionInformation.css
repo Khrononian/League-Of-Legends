@@ -112,6 +112,7 @@
     column-gap: 20px;
     margin-top: 1rem;
     width: 100%;
+    height: fit-content;
     overflow-x: auto;
     scrollbar-color: #C8AA6E #1E2328;
     scrollbar-arrow-color: #1E2328;
@@ -128,6 +129,7 @@
 .champion-splashes p {
     color: grey;
     cursor: default;
+    margin: .5em 0;
 }
 
 .active {
