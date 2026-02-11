@@ -30,9 +30,7 @@ export const getAccountProfile = async (puuid: string) => {
             puuid
         )}`
     )
-    // const text = await res.text()
-    console.log('PUUID', puuid, res)
-    // console.error('Riot:', text)
+    
     if (!res.ok) throw new Error (`Failed to fetch account ${res.status}`)
     
     return res.json()
