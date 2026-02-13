@@ -274,6 +274,7 @@
 }
 .account-match-sp p {
     display: inline-block;
+    align-self: center;
     width: fit-content;
     overflow-x: hidden;
     white-space: nowrap;
