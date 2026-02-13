@@ -4,11 +4,11 @@ With this app, you can explore player stats, match history, champion data and ra
 Features include: 
 * Summoner search
 * Displays current rank, tier, LP, win/loss ratios and KDA
-* Recent match hitory list with game mode, outcome, duration, champion played and match stats
+* Recent match history list with game mode, outcome, duration, champion played and match stats
 * [Live Link](https://leagueanalytics.netlify.app/)
 
  ## Preview
- ![League of Legends Thumbnail](.src\LoLthumbnail.png)
+ ![League of Legends Thumbnail](./src/LoLthumbnail.png)
 
 ## Challenges
 - Implementing firebase and working with a bit of Node in order to hide my API key took a lot of trial and error. Especially since I never worked with this as of yet.
