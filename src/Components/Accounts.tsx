@@ -14,7 +14,7 @@ import grandmaster from '../rankicons/9476-grandmaster.png'
 import challenger from '../rankicons/9476-challenger.png'
 
 const StateContext = createContext<ContextType>({
-    setLoading: () => true,
+    setLoadedAccount: () => false,
     setAccount: () => {},
     setSummonerProfile: () => {},
     setRankedStats: () => {},
@@ -133,7 +133,7 @@ interface Props {
 }
 
 interface ContextType {
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    setLoadedAccount: React.Dispatch<React.SetStateAction<boolean>>,
     setAccount: React.Dispatch<React.SetStateAction<Account>>,
     setSummonerProfile: React.Dispatch<React.SetStateAction<SummonerProfile>>,
     setRankedStats: React.Dispatch<React.SetStateAction<object>>,
@@ -159,6 +159,7 @@ const Accounts: React.FC<Props> = ({ versions }) => {
     const [runes, setRunes] = useState<Runes[]>([])
     const [spellIds, setSpellIds] = useState<number[][]>([[0, 0]]) // USE THIS TO PUSH THE SUMMONER SPELL IDS HERE
     const [loading, setLoading] = useState(true)
+    const [loadedAccount, setLoadedAccount] = useState(true)
     const didFetch = useRef(false)
 
     const fetchAccountData = async () => {
@@ -206,14 +207,16 @@ const Accounts: React.FC<Props> = ({ versions }) => {
         }))
         
         setSpellIds(spell)
+        setLoading(false)
     }
 
     return (
         <section className='account-section'>
-            <Nav />
-            {loading === true ? <Loading /> : <div className='account'>
+            <Nav /> 
+            { loadedAccount === true ? null : <Loading /> }
+            { loading === true ? <Loading /> : <div className='account'>
                 <div className='account-search'>
-                    <StateContext.Provider value={{ setLoading, setAccount, setSummonerProfile, setRankedStats, setFullMatchData, setRunes, loadSummonerSpells }}>
+                    <StateContext.Provider value={{ setLoadedAccount, setAccount, setSummonerProfile, setRankedStats, setFullMatchData, setRunes, loadSummonerSpells }}>
                         <CountDown  />
                     </StateContext.Provider>
                 </div> 
@@ -437,7 +440,7 @@ const Accounts: React.FC<Props> = ({ versions }) => {
                         }
                     </div>
                 </div>
-            </div>}
+            </div> }
         </section>
     )
 }
@@ -446,32 +449,30 @@ const CountDown: React.FC = () => {
     const [countDown, setCountDown] = useState(60);
     const [disability, setDisability] = useState(false);
     const [inputChange, setInputChange] = useState('')
-    const { setLoading, setAccount, setSummonerProfile,
+    const { setLoadedAccount, setAccount, setSummonerProfile,
         setRankedStats, setFullMatchData, setRunes, loadSummonerSpells
      } = useContext(StateContext)
 
     const getValues = async () => {
+        setLoadedAccount(false)
         const searchedAccount = await getAccount(inputChange)
         const leagueAccountData = await getAccountProfile(searchedAccount.puuid)
-
-        setLoading(true)
+        
         setDisability(true)
-
         setAccount(leagueAccountData.accountIdDataResponse)
         setSummonerProfile(leagueAccountData.profileResponse)
         setRankedStats(leagueAccountData.rankedResponse)
         setFullMatchData(leagueAccountData.fetchedResults)
         setRunes(leagueAccountData.runesResponse)
         loadSummonerSpells(leagueAccountData.fetchedResults, leagueAccountData.accountIdDataResponse)
+        setInputChange('')
 
-        setLoading(false)
-    }
-
-    const disableButton = () => {
-        const timer = setTimeout(() => {
+        const timer = setInterval(() => {
+            setLoadedAccount(true)
+            
             setCountDown(prev => {
                 if (prev <= 0) {
-                    clearTimeout(timer)
+                    clearInterval(timer)
                     setDisability(false)
                     setCountDown(60)
                     return 0
@@ -479,8 +480,6 @@ const CountDown: React.FC = () => {
                 return prev - 1
             })
         }, 1000)
-
-        return `(${countDown.toString()})`
     }
 
     return (
@@ -490,7 +489,7 @@ const CountDown: React.FC = () => {
                 onChange={(e) => setInputChange(e.target.value)}
                 value={inputChange}
             />
-            <button disabled={disability} onClick={getValues}>Search {disability == false ? null : disableButton()}</button>
+            <button disabled={disability} onClick={getValues}>Search {disability == false ? null : countDown}</button>
         </>
         
     )
