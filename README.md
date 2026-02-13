@@ -8,7 +8,7 @@ Features include:
 * [Live Link](https://leagueanalytics.netlify.app/)
 
  ## Preview
- ![League of Legends Thumbnail](public\LoLthumbnail.png)
+ ![League of Legends Thumbnail](.src\LoLthumbnail.png)
 
 ## Challenges
 - Implementing firebase and working with a bit of Node in order to hide my API key took a lot of trial and error. Especially since I never worked with this as of yet.
