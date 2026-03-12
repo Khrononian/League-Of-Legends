@@ -47,7 +47,7 @@ const Home = () => {
                         <Link to={`/champions/${key}`} onClick={() => fetchChampionData(key)} state={{ singleChampion, key, versions }} className='champion-card' key={key}>
                             <img src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${key}_${0}.jpg`} alt={key} style={{objectFit: 'cover'}} />
                             <div className='champion-name'>
-                                <h3>{key.toUpperCase()} </h3> 
+                                <h2>{key.toUpperCase()} </h2> 
                             </div>
                         </Link>
                     

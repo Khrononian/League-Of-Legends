@@ -10,7 +10,7 @@ const Nav = () => {
             <li>
                 <div>
                     <Link to={'/'}>
-                        <img src='https://img.icons8.com/?size=48&id=V1Ja402KSwyz&format=png' />
+                        <img alt='Riot Icon' src='https://img.icons8.com/?size=48&id=V1Ja402KSwyz&format=png' />
                     </Link>
                 </div>
             </li>
