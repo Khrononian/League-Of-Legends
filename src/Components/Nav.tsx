@@ -7,19 +7,23 @@ const Nav = () => {
   return (
     <nav>
         <ul>
-            <div>
-                <Link to={'/'}>
-                    <img src='https://img.icons8.com/?size=48&id=V1Ja402KSwyz&format=png' />
-                </Link>
-            </div>
-            <div className='nav-middle'>
-                <Link to={'/items'}>
-                <li>Items</li>
-                </Link>
-                <Link to={'/accounts/'}>
-                    <li>Accounts</li>
-                </Link>
-            </div>
+            <li>
+                <div>
+                    <Link to={'/'}>
+                        <img src='https://img.icons8.com/?size=48&id=V1Ja402KSwyz&format=png' />
+                    </Link>
+                </div>
+            </li>
+            <li>
+                <div className='nav-middle'>
+                    <Link to={'/items'}>
+                    <li>Items</li>
+                    </Link>
+                    <Link to={'/accounts/'}>
+                        <li>Accounts</li>
+                    </Link>
+                </div>
+            </li>
             <li>
                 <HugeiconsIcon 
                     icon={Menu02Icon} 
